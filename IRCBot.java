@@ -130,6 +130,11 @@ public class IRCBot {
     }
   }
 
+  // Send to server
+  public void sendUser (String user, String line) {
+    this.sendRaw("PRIVMSG " + user + " " + line + "\r\n");
+  }
+
   public static void main (String[] args) {
   }
 }
