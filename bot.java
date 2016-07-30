@@ -7,10 +7,10 @@ import java.util.Arrays;
 public class bot {
 
   private ArrayList <String> userIRC = new ArrayList <String> ();
-  private static ArrayList <String> userBuild;
-  private static ArrayList <String> userSchool;
-  private static ArrayList <String> userSurvival;
-  private static ArrayList <String> userSkyblock;
+  private static ArrayList <String> OREBuild;
+  private static ArrayList <String> ORESchool;
+  private static ArrayList <String> ORESurvival;
+  private static ArrayList <String> ORESkyblock;
 
   // Fetching global variables from "settings.properties"
   private static Properties settings = new Properties();
@@ -45,72 +45,65 @@ public class bot {
       } else if (line.contains("`users")) {
         System.out.println(line);
         assembleUsers();
-        System.out.println("\nBuild - " + userBuild.toString() + "\nSchool - " + userSchool.toString() + "\nSurvival - " + userSurvival.toString());
+        System.out.println("\nBuild - " + OREBuild.toString() + "\nSchool - " + ORESchool.toString() + "\nSurvival - " + ORESurvival.toString() + "\nSkyblock - " + ORESkyblock.toString());
       } else {
         System.out.println(line);
       }
     }
   }
 
+  // Testing if IRC user is online, mainly for use with servers
   public static boolean isOnline(String user) {
-    bot.sendRaw("WHOIS " + user + "\r\n");
+    bot.sendRaw("ISON " + user + "\r\n");
     String line = bot.readLine();
-    if (line.contains("401 " + settings.getProperty("nick"))) {
-      return false;
+    if (line.contains(user)) {
+      return true;
     }
-    return true;
+    return false;
   }
 
+  // Fetches the user list from the servers
+  public static void assembleServerUsers(String server) {
+    bot.sendUser(server, "/list");
+    String line = null;
+    while ((line = bot.readLine()) != null) {
+      if (line.contains("PRIVMSG " + settings.getProperty("nick"))) {
+        server = new ArrayList<String>(Arrays.asList((line.substring(line.lastIndexOf(": ") + 1)).split(", ")));
+        break;
+      }
+    }
+  }
+
+  // Generates the list of users across IRC and the servers
   public static void assembleUsers() {
     if (isOnline("OREBuild")) {
-      bot.sendUser("OREBuild", "/list");
-      String line = null;
-      while ((line = bot.readLine()) != null) {
-        if (line.contains("PRIVMSG " + settings.getProperty("nick"))) {
-          String[] list = (line.substring(line.lastIndexOf(": ") + 1)).split(", ");
-          userBuild = new ArrayList<String>(Arrays.asList(list));
-          break;
-        }
-      }
+      assembleServerUsers("OREBuild");
+    } else {
+      OREBuild.clear();
+      OREBuild.add("Server not online");
     }
 
     if (isOnline("ORESchool")) {
-      bot.sendUser("ORESchool", "/list");
-      String line = null;
-      while ((line = bot.readLine()) != null) {
-        if (line.contains("PRIVMSG " + settings.getProperty("nick"))) {
-          String[] list = (line.substring(line.lastIndexOf(": ") + 1)).split(", ");
-          userSchool = new ArrayList<String>(Arrays.asList(list));
-          break;
-        }
-      }
+      assembleServerUsers("ORESchool");
+    } else {
+      ORESchool.clear();
+      ORESchool.add("Server not online");
     }
 
     if (isOnline("ORESurvival")) {
-      bot.sendUser("ORESurvival", "/list");
-      String line = null;
-      while ((line = bot.readLine()) != null) {
-        if (line.contains("PRIVMSG " + settings.getProperty("nick"))) {
-          String[] list = (line.substring(line.lastIndexOf(": ") + 1)).split(", ");
-          userSurvival = new ArrayList<String>(Arrays.asList(list));
-          break;
-        }
-      }
+      assembleServerUsers("ORESurvival");
+    } else {
+      ORESurvival.clear();
+      ORESurvival.add("Server not online");
     }
 
-/*
     if (isOnline("ORESkyblock")) {
-      bot.sendUser("ORESkyblock", "/list");
-      String line = null;
-      while ((line = bot.readLine()) != null) {
-        if (line.contains("PRIVMSG " + settings.getProperty("nick"))) {
-          String[] list = (line.substring(line.lastIndexOf(": ") + 1)).split(", ");
-          userSkyblock = new ArrayList<String>(Arrays.asList(list));
-          break;
-        }
-      }
+      assembleServerUsers("ORESkyblock");
+    } else {
+      ORESkyblock.clear();
+      ORESkyblock.add("Server not online");
     }
-*/
+
     bot.sendRaw("NAMES\r\n");
     System.out.println(bot.readLine());
   }
