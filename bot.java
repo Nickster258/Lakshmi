@@ -6,11 +6,11 @@ import java.util.Arrays;
 
 public class bot {
 
-  private ArrayList <String> userIRC = new ArrayList <String> ();
-  private static ArrayList <String> OREBuild;
-  private static ArrayList <String> ORESchool;
-  private static ArrayList <String> ORESurvival;
-  private static ArrayList <String> ORESkyblock;
+  private static ArrayList <String> IRC = new ArrayList <String> ();
+  private static ArrayList <String> OREBuild = new ArrayList <String> ();
+  private static ArrayList <String> ORESchool = new ArrayList <String> ();
+  private static ArrayList <String> ORESurvival = new ArrayList <String> ();
+  private static ArrayList <String> ORESkyblock = new ArrayList <String> ();
 
   // Fetching global variables from "settings.properties"
   private static Properties settings = new Properties();
@@ -45,7 +45,7 @@ public class bot {
       } else if (line.contains("`users")) {
         System.out.println(line);
         assembleUsers();
-        System.out.println("\nBuild - " + OREBuild.toString() + "\nSchool - " + ORESchool.toString() + "\nSurvival - " + ORESurvival.toString() + "\nSkyblock - " + ORESkyblock.toString());
+        System.out.println("Build - " + OREBuild.toString() + "\nSchool - " + ORESchool.toString() + "\nSurvival - " + ORESurvival.toString() + "\nSkyblock - " + ORESkyblock.toString() + "\nIRC - " + IRC.toString());
       } else {
         System.out.println(line);
       }
@@ -56,7 +56,7 @@ public class bot {
   public static boolean isOnline(String user) {
     bot.sendRaw("ISON " + user + "\r\n");
     String line = bot.readLine();
-    if (line.contains(user)) {
+    if (line.contains(":" + user)) {
       return true;
     }
     return false;
@@ -68,8 +68,22 @@ public class bot {
     String line = null;
     while ((line = bot.readLine()) != null) {
       if (line.contains("PRIVMSG " + settings.getProperty("nick"))) {
-        server = new ArrayList<String>(Arrays.asList((line.substring(line.lastIndexOf(": ") + 1)).split(", ")));
-        break;
+        if (server == "OREBuild") {
+          OREBuild = new ArrayList<String>(Arrays.asList(line.substring(line.lastIndexOf(": ") + 1).split(", ")));
+          break;
+        }
+        if (server == "ORESchool") {
+          ORESchool = new ArrayList<String>(Arrays.asList(line.substring(line.lastIndexOf(": ") + 1).split(", ")));
+          break;
+        }
+        if (server == "ORESurvival") {
+          ORESurvival = new ArrayList<String>(Arrays.asList(line.substring(line.lastIndexOf(": ") + 1).split(", ")));
+          break;
+        }
+        if (server == "ORESkyblock") {
+          ORESkyblock = new ArrayList<String>(Arrays.asList(line.substring(line.lastIndexOf(": ") + 1).split(", ")));
+          break;
+        }
       }
     }
   }
@@ -104,7 +118,13 @@ public class bot {
       ORESkyblock.add("Server not online");
     }
 
-    bot.sendRaw("NAMES\r\n");
-    System.out.println(bot.readLine());
+    bot.sendRaw("NAMES " + settings.getProperty("channel") + "\r\n");
+    String line = null;
+    while ((line = bot.readLine()) != null) {
+      if (line.contains("353 " + settings.getProperty("nick"))) {
+        IRC = new ArrayList<String>(Arrays.asList(line.substring(line.lastIndexOf(":") + 1).split(" ")));
+        break;
+      }
+    }
   }
 }
