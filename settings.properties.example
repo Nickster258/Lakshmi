@@ -1,0 +1,18 @@
+server=server
+port=6667
+<<<<<<< HEAD:settings.properties
+channel=#openredstone
+nick=nick_bot
+pass=stupidpass
+=======
+channel=#channel
+nick=nick
+pass=pass
+>>>>>>> 1cb65c2fd17a361e2ce2f90c2ad60e7137ba8ca7:settings.properties.example
+pmOnly=false
+comSign=`
+
+serv1=OREBuild
+serv2=ORESchool
+serv3=ORESurvival
+serv4=ORESkyblock
