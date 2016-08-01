@@ -11,6 +11,7 @@ public class bot {
   private static ArrayList <String> ORESchool = new ArrayList <String> ();
   private static ArrayList <String> ORESurvival = new ArrayList <String> ();
   private static ArrayList <String> ORESkyblock = new ArrayList <String> ();
+  private static ArrayList <String> Servers = new ArrayList <String> ();
 
   // Fetching global variables from "settings.properties"
   private static Properties settings = new Properties();
@@ -42,10 +43,9 @@ public class bot {
     while ((line = bot.readLine( )) != null) {
       if (line.contains("PING")) {
         bot.sendRaw("PONG " + line.substring(5) + "\r\n");
-      } else if (line.contains("`users")) {
-        System.out.println(line);
+      } else if (line.contains(settings.getProperty("comSign"))) {
         assembleUsers();
-        System.out.println("Build - " + OREBuild.toString() + "\nSchool - " + ORESchool.toString() + "\nSurvival - " + ORESurvival.toString() + "\nSkyblock - " + ORESkyblock.toString() + "\nIRC - " + IRC.toString());
+        System.out.println(OREBuild + "\n" + ORESchool + "\n" + ORESurvival + "\n" + ORESkyblock + "\n" + IRC);
       } else {
         System.out.println(line);
       }
@@ -63,56 +63,49 @@ public class bot {
   }
 
   // Fetches the user list from the servers
-  public static void assembleServerUsers(String server) {
+  public static ArrayList<String> assembleServerUsers(String server) {
     bot.sendUser(server, "/list");
+    ArrayList<String> temp = new ArrayList<String> ();
     String line = null;
     while ((line = bot.readLine()) != null) {
       if (line.contains("PRIVMSG " + settings.getProperty("nick"))) {
-        if (server == "OREBuild") {
-          OREBuild = new ArrayList<String>(Arrays.asList(line.substring(line.lastIndexOf(": ") + 1).split(", ")));
-          break;
-        }
-        if (server == "ORESchool") {
-          ORESchool = new ArrayList<String>(Arrays.asList(line.substring(line.lastIndexOf(": ") + 1).split(", ")));
-          break;
-        }
-        if (server == "ORESurvival") {
-          ORESurvival = new ArrayList<String>(Arrays.asList(line.substring(line.lastIndexOf(": ") + 1).split(", ")));
-          break;
-        }
-        if (server == "ORESkyblock") {
-          ORESkyblock = new ArrayList<String>(Arrays.asList(line.substring(line.lastIndexOf(": ") + 1).split(", ")));
-          break;
-        }
+        temp = new ArrayList<String>(Arrays.asList(line.substring(line.lastIndexOf(": ") + 1).split(", ")));
+        break;
       }
     }
+    return temp;
   }
 
   // Generates the list of users across IRC and the servers
   public static void assembleUsers() {
+    Servers.clear();
     if (isOnline("OREBuild")) {
-      assembleServerUsers("OREBuild");
+      OREBuild = assembleServerUsers("OREBuild");
+      Servers.add("OREBuild");
     } else {
       OREBuild.clear();
       OREBuild.add("Server not online");
     }
 
     if (isOnline("ORESchool")) {
-      assembleServerUsers("ORESchool");
+      ORESchool = assembleServerUsers("ORESchool");
+      Servers.add("ORESchool");
     } else {
       ORESchool.clear();
       ORESchool.add("Server not online");
     }
 
     if (isOnline("ORESurvival")) {
-      assembleServerUsers("ORESurvival");
+      ORESurvival = assembleServerUsers("ORESurvival");
+      Servers.add("ORESurvival");
     } else {
       ORESurvival.clear();
       ORESurvival.add("Server not online");
     }
 
     if (isOnline("ORESkyblock")) {
-      assembleServerUsers("ORESkyblock");
+      ORESkyblock = assembleServerUsers("ORESkyblock");
+      Servers.add("ORESkyblock");
     } else {
       ORESkyblock.clear();
       ORESkyblock.add("Server not online");
@@ -126,5 +119,9 @@ public class bot {
         break;
       }
     }
+  }
+
+  public static String commandHandler(String raw) {
+    return "shit";
   }
 }
