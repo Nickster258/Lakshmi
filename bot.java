@@ -1,5 +1,15 @@
-import java.io.*;
-import java.net.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.OutputStream;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.FileInputStream;
+import java.io.IOException;
+
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.net.MalformedURLException;
+
 import java.util.Properties;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -43,9 +53,9 @@ public class bot {
     while ((line = bot.readLine( )) != null) {
       if (line.contains("PING")) {
         bot.sendRaw("PONG " + line.substring(5) + "\r\n");
-      } else if (line.contains(settings.getProperty("comSign"))) {
+      } else if (line.contains("`staff")) {
         assembleUsers();
-        System.out.println(OREBuild + "\n" + ORESchool + "\n" + ORESurvival + "\n" + ORESkyblock + "\n" + IRC);
+        callStaffSlack(line);
       } else {
         System.out.println(line);
       }
@@ -118,6 +128,31 @@ public class bot {
         IRC = new ArrayList<String>(Arrays.asList(line.substring(line.lastIndexOf(":") + 1).split(" ")));
         break;
       }
+    }
+  }
+
+  public static void callStaffSlack(String message) {
+
+    try {
+      URL url = new URL(settings.getProperty("slackURL"));
+      HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+      conn.setDoOutput(true);
+      conn.setRequestMethod("POST");
+
+      String input = message;
+
+      OutputStream stream = conn.getOutputStream();
+      stream.write(input.getBytes());
+      stream.flush();
+
+      BufferedReader br = new BufferedReader(new InputStreamReader((conn.getInputStream())));
+
+      conn.disconnect();
+
+    } catch (MalformedURLException e) {
+      System.out.println(e);
+    } catch (IOException e) {
+      System.out.println(e);
     }
   }
 
