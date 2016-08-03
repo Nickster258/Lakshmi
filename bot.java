@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.io.FileInputStream;
 import java.io.IOException;
 
+import javax.net.ssl.HttpsURLConnection;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.MalformedURLException;
@@ -135,15 +136,22 @@ public class bot {
 
     try {
       URL url = new URL(settings.getProperty("slackURL"));
-      HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+      HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
       conn.setDoOutput(true);
       conn.setRequestMethod("POST");
+      conn.setRequestProperty("token", settings.getProperty("token"));
+      conn.setRequestProperty("channel", "#nickbot");
+      conn.setRequestProperty("text", message);
 
       String input = message;
 
       OutputStream stream = conn.getOutputStream();
       stream.write(input.getBytes());
       stream.flush();
+
+      if (conn.getResponseCode() != HttpsURLConnection.HTTP_CREATED) {
+        throw new RuntimeException("Failed : HTTP error code : " + conn.getResponseCode());
+      }
 
       BufferedReader br = new BufferedReader(new InputStreamReader((conn.getInputStream())));
 

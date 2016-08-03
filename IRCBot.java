@@ -55,7 +55,7 @@ public class IRCBot {
       this.reader = new BufferedReader( new InputStreamReader(  socket.getInputStream(  )));
 
       this.sendRaw("NICK " + username + "\r\n");
-      this.sendRaw("USER " + password + " 8 * : IRC Bot\r\n");
+      this.sendRaw("USER " + username + " 8 * : IRC Bot\r\n");
 
       String line = null;
       while ((line = this.readLine( )) != null) {
