@@ -5,10 +5,13 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.net.MalformedURLException;
 
 import java.util.Properties;
@@ -55,8 +58,11 @@ public class bot {
       if (line.contains("PING")) {
         bot.sendRaw("PONG " + line.substring(5) + "\r\n");
       } else if (line.contains("`staff")) {
-        //assembleUsers();
+        System.out.println(line);
         callStaffSlack(line);
+      } else if (line.contains(" joined the game for the very first time.")) {
+        System.out.println(line);
+        bot.sendRaw("PRIVMSG #openredstone Welcome to ORE! Read /motd to get started!");
       } else {
         System.out.println(line);
       }
@@ -134,7 +140,7 @@ public class bot {
 
   public static void callStaffSlack(String message) {
 
-    String input = "payload={\"channel\": \"#botspam\", \"username\": \"nick_bot\", \"text\": \"" + message + "\", \"icon_emoji\": \":robot_face:\"}";
+    String input = "payload={\"channel\": \"#botspam\", \"username\": \"nick_bot\", \"text\": \"" + message.replaceAll("[^A-Za-z0-9]", " ") + "\", \"icon_emoji\": \":robot_face:\"}";
 
     HttpsURLConnection conn = null;
     try {

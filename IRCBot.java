@@ -54,8 +54,8 @@ public class IRCBot {
       this.writer = new BufferedWriter( new OutputStreamWriter( socket.getOutputStream( )));
       this.reader = new BufferedReader( new InputStreamReader(  socket.getInputStream(  )));
 
-      this.sendRaw("NICK " + username + "\r\n");
-      this.sendRaw("USER " + username + " 8 * : IRC Bot\r\n");
+      this.sendRaw("NICK " + username);
+      this.sendRaw("USER " + username + " 8 * : IRC Bot");
 
       String line = null;
       while ((line = this.readLine( )) != null) {
@@ -68,10 +68,10 @@ public class IRCBot {
       }
 
       if (channel!=null){
-        this.sendRaw("JOIN " + channel + "\r\n");
+        this.sendRaw("JOIN " + channel);
       }
       if (username!=null){
-        this.sendRaw("PRIVMSG NICKSERV IDENTIFY " + password + "\r\n");
+        this.sendRaw("PRIVMSG NICKSERV IDENTIFY " + password);
       }
 
     } catch (IOException e) {
@@ -82,24 +82,24 @@ public class IRCBot {
   // New username
   public void nick (String username) {
     this.username = username;
-    this.sendRaw("NICK " + username + "\r\n");
+    this.sendRaw("NICK " + username);
   }
 
   // New password
   public void pass (String password) {
     this.password = password;
-    this.sendRaw("USER " + password + " 8 * : \r\n");
+    this.sendRaw("USER " + password + " 8 * : ");
   }
 
   // New channel
   public void join (String channel) {
     this.channel = channel;
-    this.sendRaw("JOIN " + channel + "\r\n");
+    this.sendRaw("JOIN " + channel);
   }
 
   // Leave channel
   public void leave () {
-    this.sendRaw("PART\r\n");
+    this.sendRaw("PART");
   }
 
   // Leave and join channel
@@ -123,7 +123,7 @@ public class IRCBot {
   // Send raw message
   public void sendRaw (String line) {
     try {
-      this.writer.write(line);
+      this.writer.write(line + "\r\n");
       this.writer.flush();
     } catch (IOException e) {
       System.out.println(e);
