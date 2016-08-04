@@ -1,6 +1,9 @@
-import java.util.Date;
-import java.io.*;
-import java.net.*;
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.OutputStreamWriter;
+import java.io.InputStreamReader;
+import java.io.IOException;
+import java.net.Socket;
 
 public class IRCBot {
 
