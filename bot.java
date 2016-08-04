@@ -55,7 +55,7 @@ public class bot {
       if (line.contains("PING")) {
         bot.sendRaw("PONG " + line.substring(5) + "\r\n");
       } else if (line.contains("`staff")) {
-        assembleUsers();
+        //assembleUsers();
         callStaffSlack(line);
       } else {
         System.out.println(line);
@@ -134,22 +134,21 @@ public class bot {
 
   public static void callStaffSlack(String message) {
 
+    String input = "payload={\"channel\": \"#botspam\", \"username\": \"nick_bot\", \"text\": \"" + message + "\", \"icon_emoji\": \":robot_face:\"}";
+
+    HttpsURLConnection conn = null;
     try {
       URL url = new URL(settings.getProperty("slackURL"));
-      HttpsURLConnection conn = (HttpsURLConnection) url.openConnection();
+      conn = (HttpsURLConnection) url.openConnection();
       conn.setDoOutput(true);
+      conn.setDoInput(true);
       conn.setRequestMethod("POST");
-      conn.setRequestProperty("token", settings.getProperty("token"));
-      conn.setRequestProperty("channel", "#nickbot");
-      conn.setRequestProperty("text", message);
-
-      String input = message;
 
       OutputStream stream = conn.getOutputStream();
       stream.write(input.getBytes());
       stream.flush();
 
-      if (conn.getResponseCode() != HttpsURLConnection.HTTP_CREATED) {
+      if (conn.getResponseCode() != 200) {
         throw new RuntimeException("Failed : HTTP error code : " + conn.getResponseCode());
       }
 
