@@ -14,15 +14,12 @@ import java.net.URLEncoder;
 import java.net.MalformedURLException;
 import java.net.InetAddress;
 
-import java.util.Random;
 import java.util.Properties;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 public class bot {
 
-  private static Random random                    = new Random();
-  private static int authCode                     = random.nextInt(9000) + 1000;
   private static ArrayList <String> operators     = new ArrayList <String> ();
   private static ArrayList <String> IRC           = new ArrayList <String> ();
   private static ArrayList <String> OREBuild      = new ArrayList <String> ();
@@ -51,17 +48,17 @@ public class bot {
 
   // Main
   public static void main(String[] args) {
-    postSlack("NEW AUTH CODE: " + authCode);
     assembleOPs();
     bot.connect();
     listener();
   }
 
+  // KeepAlive
   public static void keepAlive(String line) {
     bot.sendRaw("PONG " + line.substring(5));
   }
 
-  // Listener / stayAlive
+  // Listener
   public static void listener() {
     String line = null;
     while ((line = bot.readLine( )) != null) {
@@ -72,16 +69,11 @@ public class bot {
         postSlack("@channel " + command.getUser() + " (" + command.getService() + "): " + command.getPostCommand());
       } else if (line.contains("`quit")) {
         commandParser command = new commandParser(line);
-        System.out.println(command.toString());
-        try {
-          int commandInt = Integer.parseInt(command.getPostCommand());
+        int commandInt = Integer.parseInt(command.getPostCommand());
 
-          if (operators.contains(command.getUser()) && commandInt==authCode) {
-            quit();
-            break;
-          }
-        } catch (Exception e) {
-          System.out.println(e);
+        if (operators.contains(command.getUser())) {
+          quit();
+          break;
         }
       } else {
         System.out.println(line);
