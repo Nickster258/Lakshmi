@@ -178,6 +178,7 @@ public class bot {
     }
   }
 
+  // Assembles all operators from operators.txt
   public static void assembleOPs () {
     try {
       String operator;
