@@ -83,7 +83,6 @@ public class bot {
 
   // Method to gracefully shutdown the bot
   public static void quit () {
-    postSlack("SHUTTING DOWN");
     bot.sendRaw("QUIT Time for me to head out!");
   }
 
