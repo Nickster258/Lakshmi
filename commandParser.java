@@ -18,12 +18,7 @@ public class commandParser {
     } else if (raw.startsWith("ORESkyblock",1)) {
       parseServer(temp);
     } else {
-      this.service = "IRC";
-      temp = temp.substring(temp.indexOf(":") + 1);
-      this.user = temp.substring(0, temp.indexOf("!"));
-      temp = temp.substring(temp.lastIndexOf(":") + 1);
-      this.command = temp.substring(0, temp.indexOf(" "));
-      this.postCommand = temp.substring(temp.indexOf(" "));
+      parseIRC(temp);
     }
   }
 
@@ -32,6 +27,15 @@ public class commandParser {
     temp = temp.substring(temp.indexOf(":08") + 3);
     this.user = temp.substring(0, temp.lastIndexOf(":"));
     temp = temp.substring(temp.indexOf(" ") + 1);
+    this.command = temp.substring(0, temp.indexOf(" "));
+    this.postCommand = temp.substring(temp.indexOf(" "));
+  }
+
+  public void parseIRC (String temp) {
+    this.service = "IRC";
+    temp = temp.substring(temp.indexOf(":") + 1);
+    this.user = temp.substring(0, temp.indexOf("!"));
+    temp = temp.substring(temp.lastIndexOf(":") + 1);
     this.command = temp.substring(0, temp.indexOf(" "));
     this.postCommand = temp.substring(temp.indexOf(" "));
   }
