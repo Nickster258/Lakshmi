@@ -70,8 +70,6 @@ public class bot {
       } else if (line.contains("`staff")) {
         commandParser command = new commandParser(line);
         postSlack("@channel " + command.getUser() + " (" + command.getService() + "): " + command.getPostCommand());
-//      } else if (line.contains("http://") | line.contains("https://")) {
-//        bot.sendRaw("PRIVMSG " + settings.getProperty("channel") + " " + shorten(line));
       } else if (line.contains("`quit")) {
         commandParser command = new commandParser(line);
         System.out.println(command.toString());
