@@ -25,21 +25,20 @@ public class commandParser {
   public void parseServer (String temp) {
     this.service = temp.substring(1, temp.indexOf("!"));
     temp = temp.substring(temp.indexOf(":", 1)+4);
-    this.user = temp.substring(0, temp.lastIndexOf(":"));
+    this.user = temp.substring(0, temp.indexOf(":"));
     temp = temp.substring(temp.indexOf(" ")+1);
-    if (temp.indexOf(" ") != -1) {
-      this.command = temp.substring(0, temp.indexOf(" "));
-      this.postCommand = temp.substring(temp.indexOf(" ") + 1);
-    } else {
-      this.command = temp;
-    }
+    assembleCommand(temp);
   }
 
   public void parseIRC (String temp) {
     this.service = "IRC";
     temp = temp.substring(temp.indexOf(":") + 1);
     this.user = temp.substring(0, temp.indexOf("!"));
-    temp = temp.substring(temp.lastIndexOf(":") + 1);
+    temp = temp.substring(temp.indexOf(":") + 1);
+    assembleCommand(temp);
+  }
+
+  public void assembleCommand (String temp) {
     if (temp.indexOf(" ") != -1) {
       this.command = temp.substring(0, temp.indexOf(" "));
       this.postCommand = temp.substring(temp.indexOf(" ") + 1);
