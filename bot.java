@@ -149,7 +149,7 @@ public class bot {
 
   // Simple method to send a Slack message to the specified channel
   public static void callStaffSlack(String message) {
-    String input = "payload={\"channel\": \"#botspam\", \"username\": \"nick_bot\", \"text\": \"" + message.replaceAll("[^!:(){}'`,._@A-Za-z0-9]", " ") + "\", \"icon_emoji\": \":robot_face:\"}";
+    String input = "payload={\"channel\": \"#botspam\", \"username\": \"nick_bot\", \"text\": \"" + message.replaceAll(settings.getProperty("allowedChars"), " ") + "\", \"icon_emoji\": \":robot_face:\"}";
 
     HttpsURLConnection conn = null;
     try {
