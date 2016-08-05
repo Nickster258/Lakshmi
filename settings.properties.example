@@ -6,7 +6,6 @@ pass=pass
 pmOnly=false
 comSign=`
 slackURL=https://api.slack.com/incoming-webhooks
-allowedChars=[^!:(){}'`,._@A-Za-z0-9]
 
 serv1=OREBuild
 serv2=ORESchool
