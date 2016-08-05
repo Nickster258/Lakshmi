@@ -1,11 +1,5 @@
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.OutputStream;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.FileInputStream;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.BufferedReader; import java.io.BufferedWriter; import java.io.OutputStream; import java.io.InputStream; import java.io.InputStreamReader; import 
+java.io.FileInputStream; import java.io.FileReader; import java.io.IOException;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.net.HttpURLConnection;
@@ -50,10 +44,14 @@ public class bot {
 
   // Main
   public static void main(String[] args) {
-    callStaffSlack("NEW SHUTDOWN CODE: " + authCode);
+    callStaffSlack("NEW AUTH CODE: " + authCode);
     assembleOPs();
     bot.connect();
     listener();
+  }
+
+  public static void keepAlive(String line) {
+    bot.sendRaw("PONG " + line.substring(5));
   }
 
   // Listener / stayAlive
@@ -61,17 +59,19 @@ public class bot {
     String line = null;
     while ((line = bot.readLine( )) != null) {
       if (line.contains("PING")) {
-        bot.sendRaw("PONG " + line.substring(5) + "\r\n");
+        keepAlive(line);
       } else if (line.contains("`staff")) {
         commandParser command = new commandParser(line);
         callStaffSlack("@channel " + command.getUser() + " (" + command.getService() + "): " + command.getPostCommand());
+      } else if (line.contains("http://") | line.contains("https://")) {
+        bot.sendRaw("PRIVMSG " + settings.getProperty("channel") + " " + shorten(line));
       } else if (line.contains("`quit")) {
         commandParser command = new commandParser(line);
         try {
           int commandInt = Integer.parseInt(command.getPostCommand());
 
           if (operators.contains(command.getUser()) && commandInt==authCode) {
-            bot.sendRaw("QUIT Time for me to head out!");
+            quit();
             break;
           }
         } catch (Exception e) {
@@ -81,6 +81,12 @@ public class bot {
         System.out.println(line);
       }
     }
+  }
+
+  // Method to gracefully shutdown the bot
+  public static void quit () {
+    callStaffSlack("SHUTTING DOWN");
+    bot.sendRaw("QUIT Time for me to head out!");
   }
 
   // Testing if IRC user is online, mainly for use with servers
@@ -155,6 +161,37 @@ public class bot {
         break;
       }
     }
+  }
+
+  // URL Shortener
+  public static String shorten(String message) {
+    String URL = message.substring(message.indexOf("http"));
+    String shortenedURL = null;
+    try {
+      if (URL.contains(" ")) {
+        URL = URLEncoder.encode(URL.substring(0, URL.indexOf(" ")), "UTF-8");
+      } else {
+        URL = URLEncoder.encode(URL, "UTF-8");
+      }
+    } catch (Exception e) {
+      System.out.println(e);
+    }
+
+    HttpURLConnection conn = null;
+    try {
+      URL url = new URL("https://api-ssl.bitly.com/v3/shorten?access_token=" + settings.getProperty("bitly") + "&longUrl=" + URL + "&format=txt");
+      conn = (HttpURLConnection) url.openConnection();
+      conn.setDoOutput(true);
+      conn.setDoInput(true);
+      conn.setRequestMethod("GET");
+
+      BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+      shortenedURL = in.readLine();
+      in.close();
+    } catch (Exception e) {
+      System.out.println(e);
+    }
+    return shortenedURL;
   }
 
   // Simple method to send a Slack message to the specified channel
