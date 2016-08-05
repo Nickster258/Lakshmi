@@ -24,7 +24,7 @@ public class commandParser {
 
   public void parseServer (String temp) {
     this.service = temp.substring(1, temp.indexOf("!"));
-    temp = temp.substring(temp.indexOf(":", 1)+3);
+    temp = temp.substring(temp.indexOf(":", 1)+4);
     this.user = temp.substring(0, temp.lastIndexOf(":"));
     temp = temp.substring(temp.indexOf(" ")+1);
     if (temp.indexOf(" ") != -1) {
