@@ -57,8 +57,6 @@ public class bot {
         bot.sendRaw("PONG " + line.substring(5) + "\r\n");
       } else if (line.contains("`staff")) {
         commandParser command = new commandParser(line);
-        System.out.println(line.indexOf(":08"));
-        System.out.println(command.toString());
         callStaffSlack("@channel " + command.getUser() + " (" + command.getService() + "): " + command.getPostCommand());
       } else if (line.contains(" joined the game for the very first time.")) {
         System.out.println(line);

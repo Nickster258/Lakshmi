@@ -24,11 +24,15 @@ public class commandParser {
 
   public void parseServer (String temp) {
     this.service = temp.substring(1, temp.indexOf("!"));
-    temp = temp.substring(temp.lastIndexOf("08")+2);
+    temp = temp.substring(temp.indexOf(":", 1)+3);
     this.user = temp.substring(0, temp.lastIndexOf(":"));
     temp = temp.substring(temp.indexOf(" ")+1);
-    this.command = temp.substring(0, temp.indexOf(" "));
-    this.postCommand = temp.substring(temp.indexOf(" ") + 1);
+    if (temp.indexOf(" ") != -1) {
+      this.command = temp.substring(0, temp.indexOf(" "));
+      this.postCommand = temp.substring(temp.indexOf(" ") + 1);
+    } else {
+      this.command = temp;
+    }
   }
 
   public void parseIRC (String temp) {
@@ -36,8 +40,12 @@ public class commandParser {
     temp = temp.substring(temp.indexOf(":") + 1);
     this.user = temp.substring(0, temp.indexOf("!"));
     temp = temp.substring(temp.lastIndexOf(":") + 1);
-    this.command = temp.substring(0, temp.indexOf(" "));
-    this.postCommand = temp.substring(temp.indexOf(" "));
+    if (temp.indexOf(" ") != -1) {
+      this.command = temp.substring(0, temp.indexOf(" "));
+      this.postCommand = temp.substring(temp.indexOf(" ") + 1);
+    } else {
+      this.command = temp;
+    }
   }
 
   public String getRaw () {
@@ -65,9 +73,5 @@ public class commandParser {
   }
 
   public static void main (String[] args) {
-String test = ":ORESchool!ORESchool@97-89-20-163.dhcp.gwnt.ga.charter.com PRIVMSG #openredstone :08Nickster258: `staff sfskjndfskdjfns";
-//    String test = ":ORESchool!ORESchool@97-89-20-163.dhcp.gwnt.ga.charter.com PRIVMSG #openredstone :08Reewass_Squared: `staff like 0.1 is 1/2";
-    commandParser text = new commandParser(test);
-    System.out.println(text.toString());
   }
 }
