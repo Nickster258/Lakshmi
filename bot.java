@@ -12,6 +12,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.net.MalformedURLException;
+import java.net.InetAddress;
 
 import java.util.Random;
 import java.util.Properties;
@@ -50,7 +51,7 @@ public class bot {
 
   // Main
   public static void main(String[] args) {
-    callStaffSlack("NEW AUTH CODE: " + authCode);
+    postSlack("NEW AUTH CODE: " + authCode);
     assembleOPs();
     bot.connect();
     listener();
@@ -68,11 +69,12 @@ public class bot {
         keepAlive(line);
       } else if (line.contains("`staff")) {
         commandParser command = new commandParser(line);
-        callStaffSlack("@channel " + command.getUser() + " (" + command.getService() + "): " + command.getPostCommand());
-      } else if (line.contains("http://") | line.contains("https://")) {
-        bot.sendRaw("PRIVMSG " + settings.getProperty("channel") + " " + shorten(line));
+        postSlack("@channel " + command.getUser() + " (" + command.getService() + "): " + command.getPostCommand());
+//      } else if (line.contains("http://") | line.contains("https://")) {
+//        bot.sendRaw("PRIVMSG " + settings.getProperty("channel") + " " + shorten(line));
       } else if (line.contains("`quit")) {
         commandParser command = new commandParser(line);
+        System.out.println(command.toString());
         try {
           int commandInt = Integer.parseInt(command.getPostCommand());
 
@@ -91,7 +93,7 @@ public class bot {
 
   // Method to gracefully shutdown the bot
   public static void quit () {
-    callStaffSlack("SHUTTING DOWN");
+    postSlack("SHUTTING DOWN");
     bot.sendRaw("QUIT Time for me to head out!");
   }
 
@@ -172,36 +174,48 @@ public class bot {
   // URL Shortener
   public static String shorten(String message) {
     String URL = message.substring(message.indexOf("http"));
+    String domain = URL.substring(URL.indexOf("/") + 2);
+    if (domain.indexOf("/") != -1) {
+      domain = domain.substring(0, domain.indexOf("/"));
+    }
+    System.out.println(domain);
     String shortenedURL = null;
+    boolean reachable = false;
     try {
-      if (URL.contains(" ")) {
-        URL = URLEncoder.encode(URL.substring(0, URL.indexOf(" ")), "UTF-8");
-      } else {
-        URL = URLEncoder.encode(URL, "UTF-8");
-      }
+      reachable = InetAddress.getByName(domain).isReachable(500);
     } catch (Exception e) {
       System.out.println(e);
     }
+    if (reachable) {
+      try {
+        if (URL.contains(" ")) {
+          URL = URLEncoder.encode(URL.substring(0, URL.indexOf(" ")), "UTF-8");
+        } else {
+          URL = URLEncoder.encode(URL, "UTF-8");
+        }
+      } catch (Exception e) {
+        System.out.println(e);
+      }
 
-    HttpURLConnection conn = null;
-    try {
-      URL url = new URL("https://api-ssl.bitly.com/v3/shorten?access_token=" + settings.getProperty("bitly") + "&longUrl=" + URL + "&format=txt");
-      conn = (HttpURLConnection) url.openConnection();
-      conn.setDoOutput(true);
-      conn.setDoInput(true);
-      conn.setRequestMethod("GET");
+      HttpURLConnection conn = null;
+      try {
+        URL url = new URL("https://api-ssl.bitly.com/v3/shorten?access_token=" + settings.getProperty("bitly") + "&longUrl=" + URL + "&format=txt");
+        conn = (HttpURLConnection) url.openConnection();
+        conn.setDoOutput(true);
+        conn.setDoInput(true);
+        conn.setRequestMethod("GET");
 
-      BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-      shortenedURL = in.readLine();
-      in.close();
-    } catch (Exception e) {
-      System.out.println(e);
+        BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+        shortenedURL = in.readLine();
+        in.close();
+      } catch (Exception e) {
+        System.out.println(e);
+      }
     }
     return shortenedURL;
   }
-
   // Simple method to send a Slack message to the specified channel
-  public static void callStaffSlack(String message) {
+  public static void postSlack(String message) {
     String input = "payload={\"channel\": \"#botspam\", \"username\": \"nick_bot\", \"text\": \"" + message.replaceAll(settings.getProperty("allowedChars"), " ") + "\", \"icon_emoji\": \":robot_face:\"}";
 
     HttpsURLConnection conn = null;

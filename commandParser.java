@@ -5,9 +5,11 @@ public class commandParser {
   String user;
   String command;
   String postCommand;
+  boolean pm;
 
   public commandParser (String raw) {
     this.raw = raw;
+    this.pm = !raw.contains("#");
     String temp = raw;
     if (raw.startsWith("OREBuild",1)) {
       parseServer(temp);
@@ -51,6 +53,10 @@ public class commandParser {
     return raw;
   }
 
+  public boolean isPM() {
+    return pm;
+  }
+
   public String getService () {
     return service;
   }
@@ -68,7 +74,7 @@ public class commandParser {
   }
 
   public String toString () {
-    return "Command(" + service + ", " + user + ", " + command + ", " + postCommand + ")";
+    return "Command(isPM=" + pm + ", " + service + ", " + user + ", " + command + ", " + postCommand + ")";
   }
 
   public static void main (String[] args) {
