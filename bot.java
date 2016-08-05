@@ -13,12 +13,15 @@ import java.net.URL;
 import java.net.URLEncoder;
 import java.net.MalformedURLException;
 
+import java.util.Random;
 import java.util.Properties;
 import java.util.ArrayList;
 import java.util.Arrays;
 
 public class bot {
 
+  private static Random random                    = new Random();
+  private static int authCode                     = random.nextInt(9000) + 1000;
   private static ArrayList <String> operators     = new ArrayList <String> ();
   private static ArrayList <String> IRC           = new ArrayList <String> ();
   private static ArrayList <String> OREBuild      = new ArrayList <String> ();
@@ -47,6 +50,7 @@ public class bot {
 
   // Main
   public static void main(String[] args) {
+    callStaffSlack("NEW SHUTDOWN CODE: " + authCode);
     assembleOPs();
     bot.connect();
     listener();
@@ -63,9 +67,15 @@ public class bot {
         callStaffSlack("@channel " + command.getUser() + " (" + command.getService() + "): " + command.getPostCommand());
       } else if (line.contains("`quit")) {
         commandParser command = new commandParser(line);
-        if (operators.contains(command.getUser())) {
-          bot.sendRaw("QUIT Time for me to head out!");
-          break;
+        try {
+          int commandInt = Integer.parseInt(command.getPostCommand());
+
+          if (operators.contains(command.getUser()) && commandInt==authCode) {
+            bot.sendRaw("QUIT Time for me to head out!");
+            break;
+          }
+        } catch (Exception e) {
+          System.out.println(e);
         }
       } else {
         System.out.println(line);
