@@ -56,8 +56,10 @@ public class bot {
       if (line.contains("PING")) {
         bot.sendRaw("PONG " + line.substring(5) + "\r\n");
       } else if (line.contains("`staff")) {
-        System.out.println(line);
-        callStaffSlack(line);
+        commandParser command = new commandParser(line);
+        System.out.println(line.indexOf(":08"));
+        System.out.println(command.toString());
+        callStaffSlack("@channel " + command.getUser() + " (" + command.getService() + "): " + command.getPostCommand());
       } else if (line.contains(" joined the game for the very first time.")) {
         System.out.println(line);
         bot.sendRaw("PRIVMSG #openredstone Welcome to ORE! Read /motd to get started!");
@@ -143,7 +145,7 @@ public class bot {
 
   public static void callStaffSlack(String message) {
 
-    String input = "payload={\"channel\": \"#botspam\", \"username\": \"nick_bot\", \"text\": \"" + message.replaceAll("[^!:`A-Za-z0-9]", " ") + "\", \"icon_emoji\": \":robot_face:\"}";
+    String input = "payload={\"channel\": \"#botspam\", \"username\": \"nick_bot\", \"text\": \"" + message.replaceAll("[^!:(){}'`,._@A-Za-z0-9]", " ") + "\", \"icon_emoji\": \":robot_face:\"}";
 
     HttpsURLConnection conn = null;
     try {
