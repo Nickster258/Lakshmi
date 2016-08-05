@@ -94,7 +94,12 @@ public class bot {
   // Generates the list of users across IRC and the servers
   public static void assembleUsers() {
     Servers.clear();
-    if (isOnline("OREBuild")) {
+    boolean buildStatus = isOnline("OREBuild");
+    boolean schoolStatus = isOnline("ORESchool");
+    boolean survivalStatus = isOnline("ORESurvival");
+    boolean skyblockStatus = isOnline("ORESkyblock");
+
+    if (buildStatus) {
       OREBuild = assembleServerUsers("OREBuild");
       Servers.add("OREBuild");
     } else {
@@ -102,7 +107,7 @@ public class bot {
       OREBuild.add("Server not online");
     }
 
-    if (isOnline("ORESchool")) {
+    if (schoolStatus) {
       ORESchool = assembleServerUsers("ORESchool");
       Servers.add("ORESchool");
     } else {
@@ -110,7 +115,7 @@ public class bot {
       ORESchool.add("Server not online");
     }
 
-    if (isOnline("ORESurvival")) {
+    if (survivalStatus) {
       ORESurvival = assembleServerUsers("ORESurvival");
       Servers.add("ORESurvival");
     } else {
@@ -118,7 +123,7 @@ public class bot {
       ORESurvival.add("Server not online");
     }
 
-    if (isOnline("ORESkyblock")) {
+    if (skyblockStatus) {
       ORESkyblock = assembleServerUsers("ORESkyblock");
       Servers.add("ORESkyblock");
     } else {
