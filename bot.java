@@ -4,6 +4,7 @@ import java.io.OutputStream;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.FileInputStream;
+import java.io.FileReader;
 import java.io.IOException;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -18,12 +19,13 @@ import java.util.Arrays;
 
 public class bot {
 
-  private static ArrayList <String> IRC = new ArrayList <String> ();
-  private static ArrayList <String> OREBuild = new ArrayList <String> ();
-  private static ArrayList <String> ORESchool = new ArrayList <String> ();
-  private static ArrayList <String> ORESurvival = new ArrayList <String> ();
-  private static ArrayList <String> ORESkyblock = new ArrayList <String> ();
-  private static ArrayList <String> Servers = new ArrayList <String> ();
+  private static ArrayList <String> operators     = new ArrayList <String> ();
+  private static ArrayList <String> IRC           = new ArrayList <String> ();
+  private static ArrayList <String> OREBuild      = new ArrayList <String> ();
+  private static ArrayList <String> ORESchool     = new ArrayList <String> ();
+  private static ArrayList <String> ORESurvival   = new ArrayList <String> ();
+  private static ArrayList <String> ORESkyblock   = new ArrayList <String> ();
+  private static ArrayList <String> Servers       = new ArrayList <String> ();
 
   // Fetching global variables from "settings.properties"
   private static Properties settings = new Properties();
@@ -45,6 +47,7 @@ public class bot {
 
   // Main
   public static void main(String[] args) {
+    assembleOPs();
     bot.connect();
     listener();
   }
@@ -58,9 +61,12 @@ public class bot {
       } else if (line.contains("`staff")) {
         commandParser command = new commandParser(line);
         callStaffSlack("@channel " + command.getUser() + " (" + command.getService() + "): " + command.getPostCommand());
-      } else if (line.contains(" joined the game for the very first time.")) {
-        System.out.println(line);
-        bot.sendRaw("PRIVMSG #openredstone Welcome to ORE! Read /motd to get started!");
+      } else if (line.contains("`quit")) {
+        commandParser command = new commandParser(line);
+        if (operators.contains(command.getUser())) {
+          bot.sendRaw("QUIT Time for me to head out!");
+          break;
+        }
       } else {
         System.out.println(line);
       }
@@ -141,8 +147,8 @@ public class bot {
     }
   }
 
+  // Simple method to send a Slack message to the specified channel
   public static void callStaffSlack(String message) {
-
     String input = "payload={\"channel\": \"#botspam\", \"username\": \"nick_bot\", \"text\": \"" + message.replaceAll("[^!:(){}'`,._@A-Za-z0-9]", " ") + "\", \"icon_emoji\": \":robot_face:\"}";
 
     HttpsURLConnection conn = null;
@@ -172,7 +178,18 @@ public class bot {
     }
   }
 
-  public static String commandHandler(String raw) {
-    return "shit";
+  public static void assembleOPs () {
+    try {
+      String operator;
+      BufferedReader ops = new BufferedReader(new FileReader("operators.txt"));
+
+      while ((operator = ops.readLine()) != null) {
+          operators.add(operator);
+      }
+      ops.close();
+
+    } catch (IOException e) {
+      System.out.println(e);
+    }
   }
 }
