@@ -14,7 +14,7 @@ This is my custom IRC bot project. It is capable of doing a few things at the mo
 - [X] Finalize URL shortener
 - [X] Post Slack messages
 - [ ] Figure out a way to handle custom methods for a command
-- [ ] Add a proper commandHandler system
+- [ ] Add a proper commandHandler system including trigger events
 - [ ] Add a plugin system
 
 If you have any more ideas on what I should add, just tell me!
