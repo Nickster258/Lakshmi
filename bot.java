@@ -20,13 +20,15 @@ import java.util.Arrays;
 
 public class bot {
 
-  private static ArrayList <String> operators     = new ArrayList <String> ();
-  private static ArrayList <String> IRC           = new ArrayList <String> ();
-  private static ArrayList <String> OREBuild      = new ArrayList <String> ();
-  private static ArrayList <String> ORESchool     = new ArrayList <String> ();
-  private static ArrayList <String> ORESurvival   = new ArrayList <String> ();
-  private static ArrayList <String> ORESkyblock   = new ArrayList <String> ();
-  private static ArrayList <String> Servers       = new ArrayList <String> ();
+  private static ArrayList <commandMore> commandsMore = new ArrayList <commandMore> ();
+  private static ArrayList <command>     commands     = new ArrayList <command>     ();
+  private static ArrayList <String>      operators    = new ArrayList <String>      ();
+  private static ArrayList <String>      IRC          = new ArrayList <String>      ();
+  private static ArrayList <String>      OREBuild     = new ArrayList <String>      ();
+  private static ArrayList <String>      ORESchool    = new ArrayList <String>      ();
+  private static ArrayList <String>      ORESurvival  = new ArrayList <String>      ();
+  private static ArrayList <String>      ORESkyblock  = new ArrayList <String>      ();
+  private static ArrayList <String>      Servers      = new ArrayList <String>      ();
 
   // Fetching global variables from "settings.properties"
   private static Properties settings = new Properties();
@@ -49,6 +51,7 @@ public class bot {
   // Main
   public static void main(String[] args) {
     assembleOPs();
+    assembleCommands();
     bot.connect();
     listener();
   }
@@ -238,14 +241,37 @@ public class bot {
   public static void assembleOPs () {
     try {
       String operator;
-      BufferedReader ops = new BufferedReader(new FileReader("operators.txt"));
+      BufferedReader in = new BufferedReader(new FileReader("operators.txt"));
 
-      while ((operator = ops.readLine()) != null) {
+      while ((operator = in.readLine()) != null) {
           operators.add(operator);
       }
-      ops.close();
+
+      in.close();
+
+      System.out.println("LOADED OPERATORS: " + operators.toString());
 
     } catch (IOException e) {
+      System.out.println(e);
+    }
+  }
+
+  public static void assembleCommands () {
+    try {
+      String command;
+      BufferedReader in = new BufferedReader(new FileReader("commands.txt"));
+
+      while ((command = in.readLine()) != null) {
+        String com = command.substring(0, command.indexOf("="));
+        String val = command.substring(command.indexOf("=") +1);
+        command comm = new command(com, val);
+        commands.add(comm);
+        System.out.println("LOADED COMMAND: " + comm.toString());
+      }
+
+      in.close();
+
+    } catch (Exception e) {
       System.out.println(e);
     }
   }
