@@ -34,7 +34,7 @@ public class bot {
   private static Properties settings = new Properties();
   static{
     try {
-      InputStream input = new FileInputStream("settings.properties");
+      InputStream input = new FileInputStream("includes/settings.properties");
       settings.load(input);
       input.close();
     } catch (IOException e) {
@@ -241,7 +241,7 @@ public class bot {
   public static void assembleOPs () {
     try {
       String operator;
-      BufferedReader in = new BufferedReader(new FileReader("operators.txt"));
+      BufferedReader in = new BufferedReader(new FileReader("includes/operators.txt"));
 
       while ((operator = in.readLine()) != null) {
           operators.add(operator);
@@ -259,7 +259,7 @@ public class bot {
   public static void assembleCommands () {
     try {
       String command;
-      BufferedReader in = new BufferedReader(new FileReader("commands.txt"));
+      BufferedReader in = new BufferedReader(new FileReader("includes/commands.txt"));
 
       while ((command = in.readLine()) != null) {
         String com = command.substring(0, command.indexOf("="));
