@@ -18,7 +18,7 @@ import java.util.Properties;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-public class bot {
+public class nick_bot {
 
   private static ArrayList <commandMore> commandsMore = new ArrayList <commandMore> ();
   private static ArrayList <command>     commands     = new ArrayList <command>     ();
@@ -256,6 +256,7 @@ public class bot {
     }
   }
 
+  // Assembles all commands from commands.txt
   public static void assembleCommands () {
     try {
       String command;
