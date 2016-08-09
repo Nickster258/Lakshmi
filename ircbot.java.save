@@ -1,0 +1,80 @@
+import java.io.*;
+import java.net.*;
+
+public class ircbot {
+
+  String server;
+  int port;
+  String channel;
+  String username;
+  String password;
+  BufferedWriter writer;
+  BufferedReader reader;
+  Socket socket;
+
+  public ircbot (String server, int port) {
+    this.server = server;
+    this.port = port;
+  }
+
+  public ircbot (String server, int port, String username) {
+    this(server, port);
+    this.username = username;
+  }
+
+  public ircbot (String server, int port, String username, String channel) {
+    this(server, port, username);
+    this.channel = channel;
+  }
+
+  public ircbot (String server, int port, String username, String channel, String password) {
+    this(server, port, username, channel);
+    this.password = password;
+  }
+
+  public String getServer() {
+    return server;
+  }
+
+  public int getPort() {
+    return port;
+  }
+
+  public String getUsername() {
+    return username;
+  }
+
+  public String getChannel() {
+    return channel;
+  }
+
+  public void connect (String server, int port) {
+    try {
+      socket = new Socket(server, port);
+      writer = new BufferedWriter( new OutputStreamWriter( socket.getOutputStream( )));
+      reader = new BufferedReader( new InputStreamReader(  socket.getInputStream(  )));
+    } catch (IOException e) {
+      System.out.println(e);
+    }
+  }
+
+  public void join (String channel) {
+    try {
+      writer.write("JOIN " + channel + "\r\n");
+      writer.flush();
+    } catch (IOException e) {
+      System.out.println(e);
+    }
+  }
+  public String readLine () {
+    String blah = "1";
+    try {
+      blah = reader.readLine();
+    } catch (IOException e) {
+      System.out.println(e);
+    }
+    return blah;
+  }
+  public static void main (String[] args) {
+  }
+}

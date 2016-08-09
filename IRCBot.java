@@ -126,8 +126,8 @@ public class IRCBot {
   // Send raw message
   public void sendRaw (String line) {
     try {
-      this.writer.write(line + "\r\n");
-      this.writer.flush();
+      writer.write(line + "\r\n");
+      writer.flush();
     } catch (IOException e) {
       System.out.println(e);
     }
@@ -135,7 +135,7 @@ public class IRCBot {
 
   // Send to server
   public void sendUser (String user, String line) {
-    this.sendRaw("PRIVMSG " + user + " " + line + "\r\n");
+    this.sendRaw("PRIVMSG " + user + " " + line);
   }
 
   public static void main (String[] args) {
