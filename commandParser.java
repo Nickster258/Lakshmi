@@ -10,7 +10,7 @@ public class commandParser {
   public commandParser (String raw) {
     this.raw = raw;
     this.pm = !raw.contains("#");
-    String temp = raw;
+    String temp = raw.replaceAll("[\\p{Cntrl}\\p{Cc}]","");
     if (raw.startsWith("OREBuild",1)) {
       parseServer(temp);
     } else if (raw.startsWith("ORESchool",1)) {
@@ -26,7 +26,7 @@ public class commandParser {
 
   public void parseServer (String temp) {
     this.service = temp.substring(1, temp.indexOf("!"));
-    temp = temp.substring(temp.indexOf(":", 1)+4);
+    temp = temp.substring(temp.indexOf(":", 1)+3);
     this.user = temp.substring(0, temp.indexOf(":"));
     temp = temp.substring(temp.indexOf(" ")+1);
     assembleCommand(temp);
