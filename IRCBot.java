@@ -120,6 +120,7 @@ public class IRCBot {
     } catch (IOException e) {
       System.out.println(e);
     }
+    blah = blah.replaceAll("[\\p{Cntrl}\\p{Cc}]","");
     return blah;
   }
 
