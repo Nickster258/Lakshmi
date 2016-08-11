@@ -57,8 +57,8 @@ public class IRCBot {
       this.writer = new BufferedWriter( new OutputStreamWriter( socket.getOutputStream( )));
       this.reader = new BufferedReader( new InputStreamReader(  socket.getInputStream(  )));
 
-      this.sendRaw("NICK " + username);
-      this.sendRaw("USER " + username + " 8 * : IRC Bot");
+      sendRaw("NICK " + username);
+      sendRaw("USER " + username + " 8 * : IRC Bot");
 
       String line = null;
       while ((line = this.readLine( )) != null) {
@@ -71,10 +71,10 @@ public class IRCBot {
       }
 
       if (channel!=null){
-        this.sendRaw("JOIN " + channel);
+        sendRaw("JOIN " + channel);
       }
       if (username!=null){
-        this.sendRaw("PRIVMSG NICKSERV IDENTIFY " + password);
+        sendRaw("PRIVMSG NICKSERV IDENTIFY " + password);
       }
 
     } catch (IOException e) {
@@ -85,19 +85,19 @@ public class IRCBot {
   // New username
   public void nick (String username) {
     this.username = username;
-    this.sendRaw("NICK " + username);
+    sendRaw("NICK " + username);
   }
 
   // New password
   public void pass (String password) {
     this.password = password;
-    this.sendRaw("USER " + password + " 8 * : ");
+    sendRaw("USER " + password + " 8 * : ");
   }
 
   // New channel
   public void join (String channel) {
     this.channel = channel;
-    this.sendRaw("JOIN " + channel);
+    sendRaw("JOIN " + channel);
   }
 
   // Leave channel
@@ -117,7 +117,7 @@ public class IRCBot {
     String blah = null;
     try {
       blah = this.reader.readLine();
-    } catch (IOException e) {
+    } catch (Exception e) {
       System.out.println(e);
     }
     blah = blah.replaceAll("[\\p{Cntrl}\\p{Cc}]","");
@@ -128,6 +128,22 @@ public class IRCBot {
   public void sendRaw (String line) {
     try {
       writer.write(line + "\r\n");
+      writer.flush();
+    } catch (IOException e) {
+      System.out.println(e);
+    }
+  }
+
+  public void write (String line) {
+    try {
+      writer.write(line + "\r\n");
+    } catch (IOException e) {
+      System.out.println(e);
+    }
+  }
+
+  public void flush () {
+    try {
       writer.flush();
     } catch (IOException e) {
       System.out.println(e);

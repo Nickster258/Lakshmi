@@ -1,18 +1,35 @@
+import java.util.ArrayList;
+
 public class command {
 
+  int id;
   String command;
-  String returnVal;
+  ArrayList<String> vals;
 
-  public command (String command, String returnVal) {
+  public command (int id, String command, ArrayList<String> vals) {
+    this.id = id;
     this.command = command;
-    this.returnVal = returnVal;
+    this.vals = vals;
   }
 
-  public command (String command) {
+  public command (int id, String command) {
+    this.id = id;
     this.command = command;
+  }
+
+  public int getID() {
+    return id;
+  }
+
+  public String getCommand() {
+    return command;
+  }
+
+  public ArrayList<String> getVals() {
+    return vals;
   }
 
   public String toString () {
-    return "command(" + command + ", " + returnVal + ")";
+    return "command(" + id + ", " + command + ", " + vals.toString() + ")";
   }
 }

@@ -61,22 +61,71 @@ public class nick_bot {
     bot.sendRaw("PONG " + line.substring(5));
   }
 
+  public static boolean containsCommand(String line) {
+    if (line.contains("`")) {
+      String temp = line.substring(line.indexOf("`")+1);
+      for (int i = 0; i<commands.size(); i++) {
+        command comm = commands.get(i);
+        if (comm.getCommand().equals(temp)) {
+          return true;
+        }
+      }
+    } else {
+      return false;
+    }
+    return false;
+  }
+
+  public static ArrayList<String> getVals(String line) {
+    String temp = line.substring(line.indexOf("`")+1);
+    for (int i = 0; i<commands.size(); i++) {
+      command comm = commands.get(i);
+      if (comm.getCommand().equals(temp)) {
+        return comm.getVals();
+      }
+    }
+    return operators;
+  }
+
   // Listener
   public static void listener() {
     String line = null;
     while ((line = bot.readLine( )) != null) {
       if (line.contains("PING")) {
         keepAlive(line);
+      // Basic commands
+      } else if (containsCommand(line)) {
+        commandParser comm = new commandParser(line);
+        ArrayList<String> vals = getVals(line);
+        for (int i = 0; i < vals.size(); i++) {
+          sendUser(comm, vals.get(i));
+        }
+      // Complicated commands
+      } else if (line.contains("`list")) {
+        commandParser comm = new commandParser(line);
+        assembleUsers();
+        sendUser(comm, OREBuild.toString());
+        sendUser(comm, ORESchool.toString());
+        sendUser(comm, ORESurvival.toString());
+        sendUser(comm, ORESkyblock.toString());
+        sendUser(comm, IRC.toString());
+      } else if (line.contains("`sudo")) {
+        commandParser command = new commandParser(line);
+        if (operators.contains(command.getUser())) {
+          bot.sendRaw(command.getPostCommand());
+        } else {
+          sendUser(command, "You are not authorized!");
+        }
       } else if (line.contains("`staff")) {
         commandParser command = new commandParser(line);
         postSlack("@channel " + command.getUser() + " (" + command.getService() + "): " + command.getPostCommand());
       } else if (line.contains("`quit")) {
         commandParser command = new commandParser(line);
-        int commandInt = Integer.parseInt(command.getPostCommand());
-
         if (operators.contains(command.getUser())) {
           quit();
           break;
+        } else {
+          sendUser(command, "You are not authorized!");
         }
       } else {
         System.out.println(line);
@@ -84,82 +133,74 @@ public class nick_bot {
     }
   }
 
+  public static void sendUser(commandParser command, String line) {
+    if (command.getService()=="IRC") {
+      bot.sendRaw("PRIVMSG " + command.getUser() + " " + line);
+    } else {
+      bot.sendRaw("PRIVMSG " + command.getService() + " /msg " + command.getUser() + " " + line);
+    }
+  }
+
   // Method to gracefully shutdown the bot
-  public static void quit () {
+  public static void quit() {
     bot.sendRaw("QUIT Time for me to head out!");
-  }
-
-  // Testing if IRC user is online, mainly for use with servers
-  public static boolean isOnline(String user) {
-    bot.sendRaw("ISON " + user + "\r\n");
-    String line = bot.readLine();
-    if (line.contains(":" + user)) {
-      return true;
-    }
-    return false;
-  }
-
-  // Fetches the user list from the servers
-  public static ArrayList<String> assembleServerUsers(String server) {
-    bot.sendUser(server, "/list");
-    ArrayList<String> temp = new ArrayList<String> ();
-    String line = null;
-    while ((line = bot.readLine()) != null) {
-      if (line.contains("PRIVMSG " + settings.getProperty("nick"))) {
-        temp = new ArrayList<String>(Arrays.asList(line.substring(line.lastIndexOf(": ") + 1).split(", ")));
-        break;
-      }
-    }
-    return temp;
   }
 
   // Generates the list of users across IRC and the servers
   public static void assembleUsers() {
     Servers.clear();
-    boolean buildStatus = isOnline("OREBuild");
-    boolean schoolStatus = isOnline("ORESchool");
-    boolean survivalStatus = isOnline("ORESurvival");
-    boolean skyblockStatus = isOnline("ORESkyblock");
+    String line = null;
 
-    if (buildStatus) {
-      OREBuild = assembleServerUsers("OREBuild");
-      Servers.add("OREBuild");
-    } else {
-      OREBuild.clear();
-      OREBuild.add("Server not online");
+    bot.sendRaw("PRIVMSG OREBuild /list");
+    if ((line = bot.readLine( )) != null) {
+      if (line.contains("No such nick")) {
+        OREBuild.clear();
+        OREBuild.add("Server offline");
+      } else {
+        line.replaceAll("\\s+", "");
+        OREBuild = new ArrayList<String>(Arrays.asList(line.substring(line.lastIndexOf(": ") + 1).split(", ")));
+      }
     }
 
-    if (schoolStatus) {
-      ORESchool = assembleServerUsers("ORESchool");
-      Servers.add("ORESchool");
-    } else {
-      ORESchool.clear();
-      ORESchool.add("Server not online");
+    bot.sendRaw("PRIVMSG ORESchool /list");
+    if ((line = bot.readLine( )) != null) {
+      if (line.contains("No such nick")) {
+        ORESchool.clear();
+        ORESchool.add("Server offline");
+      } else {
+        line.replaceAll("\\s+", "");
+        ORESchool = new ArrayList<String>(Arrays.asList(line.substring(line.lastIndexOf(": ") + 1).split(", ")));
+      }
     }
 
-    if (survivalStatus) {
-      ORESurvival = assembleServerUsers("ORESurvival");
-      Servers.add("ORESurvival");
-    } else {
-      ORESurvival.clear();
-      ORESurvival.add("Server not online");
+    bot.sendRaw("PRIVMSG ORESurvival /list");
+    if ((line = bot.readLine( )) != null) {
+      if (line.contains("No such nick")) {
+        ORESurvival.clear();
+        ORESurvival.add("Server offline");
+      } else {
+        line.replaceAll("\\s+", "");
+        ORESurvival = new ArrayList<String>(Arrays.asList(line.substring(line.lastIndexOf(": ") + 1).split(", ")));
+      }
     }
 
-    if (skyblockStatus) {
-      ORESkyblock = assembleServerUsers("ORESkyblock");
-      Servers.add("ORESkyblock");
-    } else {
-      ORESkyblock.clear();
-      ORESkyblock.add("Server not online");
+    bot.sendRaw("PRIVMSG ORESkyblock /list");
+    if ((line = bot.readLine( )) != null) {
+      if (line.contains("No such nick")) {
+        ORESkyblock.clear();
+        ORESkyblock.add("Server offline");
+      } else {
+        line.replaceAll("\\s+", "");
+        ORESkyblock = new ArrayList<String>(Arrays.asList(line.substring(line.lastIndexOf(": ") + 1).split(", ")));
+      }
     }
 
     bot.sendRaw("NAMES " + settings.getProperty("channel") + "\r\n");
-    String line = null;
-    while ((line = bot.readLine()) != null) {
-      if (line.contains("353 " + settings.getProperty("nick"))) {
-        IRC = new ArrayList<String>(Arrays.asList(line.substring(line.lastIndexOf(":") + 1).split(" ")));
-        break;
-      }
+    //while ((line = bot.readLine()) != null) {
+      //if (line.contains("353 " + settings.getProperty("nick"))) {
+    if ((line = bot.readLine( )) != null) {
+      IRC = new ArrayList<String>(Arrays.asList(line.substring(line.lastIndexOf(":") + 1).split(" ")));
+//        break;
     }
   }
 
@@ -261,11 +302,12 @@ public class nick_bot {
     try {
       String command;
       BufferedReader in = new BufferedReader(new FileReader("includes/commands.txt"));
-
+      int id = 0;
       while ((command = in.readLine()) != null) {
+        id++;
         String com = command.substring(0, command.indexOf("="));
-        String val = command.substring(command.indexOf("=") +1);
-        command comm = new command(com, val);
+        ArrayList<String> val = new ArrayList<String>(Arrays.asList(command.substring(command.indexOf("=") +1).split(",")));
+        command comm = new command(id, com, val);
         commands.add(comm);
         System.out.println("LOADED COMMAND: " + comm.toString());
       }
