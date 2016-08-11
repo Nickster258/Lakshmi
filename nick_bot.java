@@ -342,6 +342,7 @@ public class nick_bot {
       String command;
       BufferedReader in = new BufferedReader(new FileReader("includes/commands.txt"));
       int id = 0;
+      commands.clear();
       while ((command = in.readLine()) != null) {
         id++;
         String com = command.substring(0, command.indexOf("="));
