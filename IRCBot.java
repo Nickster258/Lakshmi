@@ -17,6 +17,9 @@ public class IRCBot {
   Socket socket;
 
   // Constructors
+  public IRCBot () {
+  }
+
   public IRCBot (String server, int port, String username) {
     this.server = server;
     this.port = port;
@@ -80,6 +83,13 @@ public class IRCBot {
     } catch (IOException e) {
       System.out.println(e);
     }
+  }
+
+  public void disconnect () {
+    sendRaw("QUIT");
+    sendRaw("LEAVE");
+    sendRaw("PART");
+    sendRaw("DISCONNECT");
   }
 
   // New username

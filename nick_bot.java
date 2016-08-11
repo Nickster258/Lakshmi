@@ -32,7 +32,7 @@ public class nick_bot {
 
   // Fetching global variables from "settings.properties"
   private static Properties settings = new Properties();
-  static{
+  private static void loadSettings () {
     try {
       InputStream input = new FileInputStream("includes/settings.properties");
       settings.load(input);
@@ -41,17 +41,23 @@ public class nick_bot {
       System.out.println(e);
     }
   }
-  public static String getProperty (String key) {
+  private static String getProperty (String key) {
     return settings.getProperty(key);
   }
 
   // Setting bot
-  private static IRCBot bot = new IRCBot(settings.getProperty("server"), Integer.parseInt(settings.getProperty("port")), settings.getProperty("nick"), settings.getProperty("channel"), settings.getProperty("pass"));
+  private static IRCBot bot = new IRCBot();// = new IRCBot(settings.getProperty("server"), Integer.parseInt(settings.getProperty("port")), settings.getProperty("nick"), settings.getProperty("channel"), settings.getProperty("pass"));
+
+  private static void loadBot() {
+    bot = new IRCBot(settings.getProperty("server"), Integer.parseInt(settings.getProperty("port")), settings.getProperty("nick"), settings.getProperty("channel"), settings.getProperty("pass"));
+  }
 
   // Main
   public static void main(String[] args) {
+    loadSettings();
     assembleOPs();
     assembleCommands();
+    loadBot();
     bot.connect();
     listener();
   }
@@ -87,12 +93,22 @@ public class nick_bot {
     return operators;
   }
 
+  public static void reload() {
+    bot.disconnect();
+    loadSettings();
+    assembleOPs();
+    assembleCommands();
+    loadBot();
+    bot.connect();
+  }
+
   // Listener
   public static void listener() {
     String line = null;
     while ((line = bot.readLine( )) != null) {
       if (line.contains("PING")) {
         keepAlive(line);
+
       // Basic commands
       } else if (containsCommand(line)) {
         commandParser comm = new commandParser(line);
@@ -100,7 +116,26 @@ public class nick_bot {
         for (int i = 0; i < vals.size(); i++) {
           sendUser(comm, vals.get(i));
         }
+        System.out.println("COMMAND EXECUTED: " + comm.toString());
+
       // Complicated commands
+      } else if (line.contains("`commands")) {
+        commandParser comm = new commandParser(line);
+        String commList = "Commands: ";
+        for (int i = 0; i < commands.size(); i++) {
+          command temp = commands.get(i);
+          commList = commList.concat(temp.getCommand() + " ");
+        }
+        sendUser(comm, commList);
+        System.out.println("COMMAND EXECUTED: " + comm.toString());
+      } else if (line.contains("`reload")) {
+        commandParser comm = new commandParser(line);
+        if (operators.contains(comm.getUser())) {
+          reload();
+        } else {
+          sendUser(comm, "You are not authorized!");
+        }
+        System.out.println("COMMAND EXECUTED: " + comm.toString());
       } else if (line.contains("`list")) {
         commandParser comm = new commandParser(line);
         assembleUsers();
@@ -109,24 +144,28 @@ public class nick_bot {
         sendUser(comm, ORESurvival.toString());
         sendUser(comm, ORESkyblock.toString());
         sendUser(comm, IRC.toString());
+        System.out.println("COMMAND EXECUTED: " + comm.toString());
       } else if (line.contains("`sudo")) {
-        commandParser command = new commandParser(line);
-        if (operators.contains(command.getUser())) {
-          bot.sendRaw(command.getPostCommand());
+        commandParser comm = new commandParser(line);
+        if (operators.contains(comm.getUser())) {
+          bot.sendRaw(comm.getPostCommand());
         } else {
-          sendUser(command, "You are not authorized!");
+          sendUser(comm, "You are not authorized!");
         }
+        System.out.println("COMMAND EXECUTED: " + comm.toString());
       } else if (line.contains("`staff")) {
-        commandParser command = new commandParser(line);
-        postSlack("@channel " + command.getUser() + " (" + command.getService() + "): " + command.getPostCommand());
+        commandParser comm = new commandParser(line);
+        postSlack("@channel " + comm.getUser() + " (" + comm.getService() + "): " + comm.getPostCommand());
+        System.out.println("COMMAND EXECUTED: " + comm.toString());
       } else if (line.contains("`quit")) {
-        commandParser command = new commandParser(line);
-        if (operators.contains(command.getUser())) {
+        commandParser comm = new commandParser(line);
+        if (operators.contains(comm.getUser())) {
           quit();
           break;
         } else {
-          sendUser(command, "You are not authorized!");
+          sendUser(comm, "You are not authorized!");
         }
+        System.out.println("COMMAND EXECUTED: " + comm.toString());
       } else {
         System.out.println(line);
       }
