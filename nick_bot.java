@@ -22,6 +22,7 @@ public class nick_bot {
 
   private static ArrayList <commandMore> commandsMore = new ArrayList <commandMore> ();
   private static ArrayList <command>     commands     = new ArrayList <command>     ();
+  private static ArrayList <users>       patreons     = new ArrayList <users>       ();
   private static ArrayList <String>      operators    = new ArrayList <String>      ();
   private static ArrayList <String>      IRC          = new ArrayList <String>      ();
   private static ArrayList <String>      OREBuild     = new ArrayList <String>      ();
@@ -91,6 +92,17 @@ public class nick_bot {
       }
     }
     return operators;
+  }
+
+  public static void timeout(String name) {
+    if (patreons.contains(name)) {
+      users temp = patreons.get(patreons.indexOf(name));
+      temp.timeout++;
+    } else {
+      users temp = new users(name);
+      temp.timeout++;
+      patreons.add(temp);
+    }
   }
 
   public static void reload() {
