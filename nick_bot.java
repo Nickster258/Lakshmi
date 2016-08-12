@@ -104,7 +104,6 @@ public class nick_bot {
       users temp = patreons.get(i);
       if (temp.getName().equals(name)) {
         temp.timeout++;
-        System.out.println(temp.toString());
         patreons.remove(i);
         patreons.add(temp);
         found = true;
@@ -114,7 +113,6 @@ public class nick_bot {
     if (!found) {
       users temp = new users(name);
       temp.timeout++;
-      System.out.println(temp.toString());
       patreons.add(temp);
     }
 
@@ -146,8 +144,6 @@ public class nick_bot {
       // Basic commands
       } else if (containsCommand(line)) {
         commandParser comm = new commandParser(line);
-     //   timeout(comm.getUser());
-        System.out.println(patreons.toString());
         if (canSpeak(comm.getUser())) {
           ArrayList<String> vals = getVals(line);
           for (int i = 0; i < vals.size(); i++) {
