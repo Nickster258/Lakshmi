@@ -347,6 +347,7 @@ public class nick_bot {
   // Assembles all operators from operators.txt
   public static void assembleOPs () {
     try {
+      operators.clear();
       String operator;
       BufferedReader in = new BufferedReader(new FileReader("includes/operators.txt"));
 
