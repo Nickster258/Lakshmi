@@ -1,14 +1,20 @@
 test=DUH I'M HERE
 lemon=lemon
-ping=ping pong,... you ding dong.
+ping=ping pong, ... you ding dong.
 hoe=Never waste your diamonds on a hoe.
 aww=Eww no.
 fun=Time for fun fun Mr. Funyun :D
-roses=Roses are red,Violets are blue,I have a gun,Get in the van.
+roses=Roses are red, Violets are blue, I have a gun, Get in the van.
 hi=hello
 slug=IntOREnet will be a thing I swear
-nuup=nuup: it's only gay after you're 5cm inside someone,nuup: so I can never be gay
-harambe=Dicks out for harambe!,R.I.P. you sweet prince!
+nuup=nuup: it's only gay after you're 5cm inside someone, nuup: so I can never be gay
+harambe=Dicks out for harambe!, R.I.P. you sweet prince!
 laythe=Most of my existence can be summed up as a compilation of yo mama jokes.
 israel=ISRAEL IS BEST COUNTRY
-kek=kek <- this one,kek,kek
+kek=kek <- this one, kek, kek
+rekt=https://www.youtube.com/watch?v=sS_cAAAhgPM
+foo=bar
+`=Why not just use "?
+servers=Build: mc.openredstone.org - 84.215.69.184:25569, School: sc.openredstone.org - 97.89.20.163:25565, Survival: ss.openredstone.org - 162.243.90.113:25573
+snek=A long carnivorous legless reptile otherwise known as a snake. 
+tuchi=Salty Mc Saltster

@@ -119,6 +119,10 @@ public class nick_bot {
         System.out.println("COMMAND EXECUTED: " + comm.toString());
 
       // Complicated commands
+      } else if (line.contains("`urban")) {
+        commandParser comm = new commandParser(line);
+        sendUser(comm, urban(comm));
+        System.out.println("COMMAND EXECUTED: " + comm.toString());
       } else if (line.contains("`commands")) {
         commandParser comm = new commandParser(line);
         String commList = "Commands: ";
@@ -286,6 +290,32 @@ public class nick_bot {
     }
     return shortenedURL;
   }
+
+  public static String urban(commandParser comm) {
+    String name = comm.getPostCommand();
+    String temp = "No definitions found for " + name;
+    HttpsURLConnection conn = null;
+    try {
+      URL url = new URL("https://mashape-community-urban-dictionary.p.mashape.com/define?term=" + name);
+      conn = (HttpsURLConnection) url.openConnection();
+      conn.setDoOutput(true);
+      conn.setDoInput(true);
+      conn.setRequestMethod("GET");
+      conn.setRequestProperty("X-Mashape-Key", settings.getProperty("mashape"));
+      conn.setRequestProperty("Accept", "text/plain");
+
+      BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+      String line = in.readLine();
+      System.out.println(line);
+      if (line.contains("\"definition\":")) {
+        temp = line.substring(line.indexOf("definition") + 13, line.indexOf("\"", line.indexOf("definition") + 14));
+      }
+    } catch (Exception e) {
+      System.out.println(e);
+    }
+    return temp;
+  }
+
   // Simple method to send a Slack message to the specified channel
   public static void postSlack(String message) {
     String input = "payload={\"channel\": \"#botspam\", \"username\": \"nick_bot\", \"text\": \"" + message.replaceAll(settings.getProperty("allowedChars"), " ") + "\", \"icon_emoji\": \":robot_face:\"}";
@@ -305,8 +335,6 @@ public class nick_bot {
       if (conn.getResponseCode() != 200) {
         throw new RuntimeException("Failed : HTTP error code : " + conn.getResponseCode());
       }
-
-      BufferedReader br = new BufferedReader(new InputStreamReader((conn.getInputStream())));
 
       conn.disconnect();
 
@@ -346,7 +374,7 @@ public class nick_bot {
       while ((command = in.readLine()) != null) {
         id++;
         String com = command.substring(0, command.indexOf("="));
-        ArrayList<String> val = new ArrayList<String>(Arrays.asList(command.substring(command.indexOf("=") +1).split(",")));
+        ArrayList<String> val = new ArrayList<String>(Arrays.asList(command.substring(command.indexOf("=") +1).split(", ")));
         command comm = new command(id, com, val);
         commands.add(comm);
         System.out.println("LOADED COMMAND: " + comm.toString());
