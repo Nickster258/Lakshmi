@@ -22,7 +22,7 @@ public class nick_bot {
 
   private static ArrayList <commandMore> commandsMore = new ArrayList <commandMore> ();
   private static ArrayList <command>     commands     = new ArrayList <command>     ();
-  private static ArrayList <users>       patreons     = new ArrayList <users>       ();
+  public  static ArrayList <users>       patreons     = new ArrayList <users>       ();
   private static ArrayList <String>      operators    = new ArrayList <String>      ();
   private static ArrayList <String>      IRC          = new ArrayList <String>      ();
   private static ArrayList <String>      OREBuild     = new ArrayList <String>      ();
@@ -58,9 +58,15 @@ public class nick_bot {
     loadSettings();
     assembleOPs();
     assembleCommands();
+    startAntispam();
     loadBot();
     bot.connect();
     listener();
+  }
+
+  public static void startAntispam() {
+    timeout thread = new timeout();
+    thread.start();
   }
 
   // KeepAlive
@@ -77,8 +83,6 @@ public class nick_bot {
           return true;
         }
       }
-    } else {
-      return false;
     }
     return false;
   }
@@ -95,14 +99,33 @@ public class nick_bot {
   }
 
   public static void timeout(String name) {
-    if (patreons.contains(name)) {
-      users temp = patreons.get(patreons.indexOf(name));
-      temp.timeout++;
-    } else {
+    boolean found = false;
+    for (int i = 0; i < patreons.size(); i++) {
+      users temp = patreons.get(i);
+      if (temp.getName().equals(name)) {
+        temp.timeout++;
+        System.out.println(temp.toString());
+        patreons.remove(i);
+        patreons.add(temp);
+        found = true;
+      }
+    }
+    if (!found) {
       users temp = new users(name);
       temp.timeout++;
+      System.out.println(temp.toString());
       patreons.add(temp);
     }
+  }
+
+  public static boolean canSpeak(String name) {
+    for (int i = 0; i < patreons.size(); i++) {
+      users temp = patreons.get(i);
+      if ((temp.getName().equals(name)) && (temp.timeout < 6 )) {
+        return true;
+      }
+    }
+    return false;
   }
 
   public static void reload() {
@@ -124,9 +147,15 @@ public class nick_bot {
       // Basic commands
       } else if (containsCommand(line)) {
         commandParser comm = new commandParser(line);
-        ArrayList<String> vals = getVals(line);
-        for (int i = 0; i < vals.size(); i++) {
-          sendUser(comm.getService(), comm.getUser(), vals.get(i));
+        timeout(comm.getUser());
+        System.out.println(patreons.toString());
+        if (canSpeak(comm.getUser())) {
+          ArrayList<String> vals = getVals(line);
+          for (int i = 0; i < vals.size(); i++) {
+            sendUser(comm.getService(), comm.getUser(), vals.get(i));
+          }
+        } else {
+          sendUser(comm.getService(), comm.getUser(), "You have exceeded your timeout!");
         }
         System.out.println("COMMAND EXECUTED: " + comm.toString());
 

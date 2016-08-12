@@ -8,7 +8,7 @@ public class commandParser {
   String user;
   String command;
   String postCommandRaw;
-  ArrayList<String> postCommand;
+  ArrayList<String> postCommand = new ArrayList<String> ();
   boolean pm;
 
   public commandParser (String raw) {
@@ -48,8 +48,8 @@ public class commandParser {
     if (temp.indexOf(" ") != -1) {
       temp = temp.substring(temp.indexOf("`") + 1);
       this.command = temp.substring(0, temp.indexOf(" "));
-      this.postCommand = new ArrayList<String>(Arrays.asList(temp.substring(temp.indexOf(" ") +1).split(" ")));
       this.postCommandRaw = temp.substring(temp.indexOf(" ") +1);
+      this.postCommand = new ArrayList<String>(Arrays.asList(temp.substring(temp.indexOf(" ") +1).split(" ")));
     } else {
       this.command = temp;
     }

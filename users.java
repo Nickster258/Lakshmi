@@ -15,4 +15,8 @@ public class users {
   public int getTimeout() {
     return timeout;
   }
+
+  public String toString() {
+    return "user(" + name + ", " + timeout + ")";
+  }
 }
