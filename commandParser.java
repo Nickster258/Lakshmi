@@ -1,10 +1,14 @@
+import java.util.ArrayList;
+import java.util.Arrays;
+
 public class commandParser {
 
   String raw;
   String service;
   String user;
   String command;
-  String postCommand;
+  String postCommandRaw;
+  ArrayList<String> postCommand;
   boolean pm;
 
   public commandParser (String raw) {
@@ -42,8 +46,10 @@ public class commandParser {
 
   public void assembleCommand (String temp) {
     if (temp.indexOf(" ") != -1) {
+      temp = temp.substring(temp.indexOf("`") + 1);
       this.command = temp.substring(0, temp.indexOf(" "));
-      this.postCommand = temp.substring(temp.indexOf(" ") + 1);
+      this.postCommand = new ArrayList<String>(Arrays.asList(temp.substring(temp.indexOf(" ") +1).split(" ")));
+      this.postCommandRaw = temp.substring(temp.indexOf(" ") +1);
     } else {
       this.command = temp;
     }
@@ -69,12 +75,16 @@ public class commandParser {
     return command;
   }
 
-  public String getPostCommand () {
-    return postCommand;
+  public String getPostCommandRaw () {
+    return postCommandRaw;
+  }
+
+  public String getPostCommand (int index) {
+    return postCommand.get(index);
   }
 
   public String toString () {
-    return "Command(isPM=" + pm + ", " + service + ", " + user + ", " + command + ", " + postCommand + ")";
+    return "Command(isPM=" + pm + ", " + service + ", " + user + ", " + command + ", " + postCommand.toString() + ")";
   }
 
   public static void main (String[] args) {

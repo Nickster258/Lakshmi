@@ -114,18 +114,18 @@ public class nick_bot {
         commandParser comm = new commandParser(line);
         ArrayList<String> vals = getVals(line);
         for (int i = 0; i < vals.size(); i++) {
-          sendUser(comm, vals.get(i));
+          sendUser(comm.getService(), comm.getUser(), vals.get(i));
         }
         System.out.println("COMMAND EXECUTED: " + comm.toString());
 
       // Complicated commands
       } else if (line.contains("`urban")) {
         commandParser comm = new commandParser(line);
-        sendUser(comm, urban(comm));
+        sendUser(comm.getService(), comm.getUser(), urban(comm.getPostCommand(0)));
         System.out.println("COMMAND EXECUTED: " + comm.toString());
       } else if (line.contains("`define")) {
         commandParser comm = new commandParser(line);
-        sendUser(comm, define(comm));
+        sendUser(comm.getService(), comm.getUser(), define(comm.getPostCommand(0)));
         System.out.println("COMMAND EXECUTED: " + comm.toString());
       } else if (line.contains("`commands")) {
         commandParser comm = new commandParser(line);
@@ -134,40 +134,40 @@ public class nick_bot {
           command temp = commands.get(i);
           commList = commList.concat(temp.getCommand() + " ");
         }
-        sendUser(comm, commList);
-        sendUser(comm, "Complex commands (*OP required): urban list staff sudo* reload* quit*");
+        sendUser(comm.getService(), comm.getUser(), commList);
+        sendUser(comm.getService(), comm.getUser(), "Complex commands (*OP required): urban define list staff sudo* reload* quit*");
         System.out.println("COMMAND EXECUTED: " + comm.toString());
       } else if (line.contains("`reload")) {
         commandParser comm = new commandParser(line);
         if (operators.contains(comm.getUser())) {
           reload();
         } else {
-          sendUser(comm, "You are not authorized!");
+          sendUser(comm.getService(), comm.getUser(), "You are not authorized!");
         }
         System.out.println("COMMAND EXECUTED: " + comm.toString());
       } else if (line.contains("`list")) {
         commandParser comm = new commandParser(line);
         assembleUsers();
-        sendUser(comm, OREBuild.toString());
-        sendUser(comm, ORESchool.toString());
-        sendUser(comm, ORESurvival.toString());
-        sendUser(comm, ORESkyblock.toString());
-        sendUser(comm, IRC.toString());
+        sendUser(comm.getService(), comm.getUser(), OREBuild.toString());
+        sendUser(comm.getService(), comm.getUser(), ORESchool.toString());
+        sendUser(comm.getService(), comm.getUser(), ORESurvival.toString());
+        sendUser(comm.getService(), comm.getUser(), ORESkyblock.toString());
+        sendUser(comm.getService(), comm.getUser(), IRC.toString());
         System.out.println("COMMAND EXECUTED: " + comm.toString());
       } else if (line.contains("`sudo")) {
         commandParser comm = new commandParser(line);
         if (operators.contains(comm.getUser())) {
-          bot.sendRaw(comm.getPostCommand());
+          bot.sendRaw(comm.getPostCommandRaw());
         } else {
-          sendUser(comm, "You are not authorized!");
+          sendUser(comm.getService(), comm.getUser(), "You are not authorized!");
         }
         System.out.println("COMMAND EXECUTED: " + comm.toString());
       } else if (line.contains("`staff")) {
         commandParser comm = new commandParser(line);
-        if (comm.getPostCommand() != null) {
-          postSlack("@channel " + comm.getUser() + " (" + comm.getService() + "): " + comm.getPostCommand());
+        if (comm.getPostCommandRaw() != null) {
+          postSlack("@channel " + comm.getUser() + " (" + comm.getService() + "): " + comm.getPostCommandRaw());
         } else {
-          sendUser(comm, "Please include a statement!");
+          sendUser(comm.getService(), comm.getUser(), "Please include a statement!");
         }
         System.out.println("COMMAND EXECUTED: " + comm.toString());
       } else if (line.contains("`quit")) {
@@ -176,7 +176,7 @@ public class nick_bot {
           quit();
           break;
         } else {
-          sendUser(comm, "You are not authorized!");
+          sendUser(comm.getService(), comm.getUser(), "You are not authorized!");
         }
         System.out.println("COMMAND EXECUTED: " + comm.toString());
       } else {
@@ -185,11 +185,11 @@ public class nick_bot {
     }
   }
 
-  public static void sendUser(commandParser command, String line) {
-    if (command.getService()=="IRC") {
-      bot.sendRaw("PRIVMSG " + command.getUser() + " " + line);
+  public static void sendUser(String service, String user, String line) {
+    if (service=="IRC") {
+      bot.sendRaw("PRIVMSG " + user + " " + line);
     } else {
-      bot.sendRaw("PRIVMSG " + command.getService() + " /msg " + command.getUser() + " " + line);
+      bot.sendRaw("PRIVMSG " + service + " /msg " + user + " " + line);
     }
   }
 
@@ -301,12 +301,11 @@ public class nick_bot {
   }
 
   // Search things on Urban Dictionary
-  public static String urban(commandParser comm) {
-    String name = comm.getPostCommand();
-    String temp = "No definitions found for " + name;
+  public static String urban(String word) {
+    String temp = "No definitions found for " + word;
     HttpsURLConnection conn = null;
     try {
-      URL url = new URL("https://mashape-community-urban-dictionary.p.mashape.com/define?term=" + name);
+      URL url = new URL("https://mashape-community-urban-dictionary.p.mashape.com/define?term=" + word);
       conn = (HttpsURLConnection) url.openConnection();
       conn.setDoOutput(true);
       conn.setDoInput(true);
@@ -317,7 +316,12 @@ public class nick_bot {
       BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
       String line = in.readLine();
       if (line.contains("\"definition\":")) {
-        temp = line.substring(line.indexOf("definition") + 13, line.indexOf("\"", line.indexOf("definition") + 14));
+        temp = line.substring(line.indexOf("definition") + 13, line.indexOf(",\"permalink\"") - 1);
+        temp.replaceAll("\\\"", "\"");
+        temp.replaceAll("[^\\{IsLetter}]+", " ");
+        if (temp.length() > 150) {
+          temp = temp.substring(0, 150) + "...";
+        }
       }
     } catch (Exception e) {
       System.out.println(e);
@@ -325,12 +329,11 @@ public class nick_bot {
     return temp;
   }
 
-  public static String define(commandParser comm) {
-    String name = comm.getPostCommand();
-    String temp = "No definitions found for " + name;
+  public static String define(String word) {
+    String temp = "No definitions found for " + word;
     HttpURLConnection conn = null;
     try {
-      URL url = new URL("http://www.dictionaryapi.com/api/v1/references/collegiate/xml/" + name + "?key=" + settings.getProperty("dictionary"));
+      URL url = new URL("http://www.dictionaryapi.com/api/v1/references/collegiate/xml/" + word + "?key=" + settings.getProperty("dictionary"));
       conn = (HttpURLConnection) url.openConnection();
       conn.setRequestMethod("GET");
 
