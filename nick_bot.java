@@ -98,7 +98,7 @@ public class nick_bot {
     return operators;
   }
 
-  public static void timeout(String name) {
+  public static boolean canSpeak(String name) {
     boolean found = false;
     for (int i = 0; i < patreons.size(); i++) {
       users temp = patreons.get(i);
@@ -110,15 +110,14 @@ public class nick_bot {
         found = true;
       }
     }
+
     if (!found) {
       users temp = new users(name);
       temp.timeout++;
       System.out.println(temp.toString());
       patreons.add(temp);
     }
-  }
 
-  public static boolean canSpeak(String name) {
     for (int i = 0; i < patreons.size(); i++) {
       users temp = patreons.get(i);
       if ((temp.getName().equals(name)) && (temp.timeout < 6 )) {
@@ -147,7 +146,7 @@ public class nick_bot {
       // Basic commands
       } else if (containsCommand(line)) {
         commandParser comm = new commandParser(line);
-        timeout(comm.getUser());
+     //   timeout(comm.getUser());
         System.out.println(patreons.toString());
         if (canSpeak(comm.getUser())) {
           ArrayList<String> vals = getVals(line);

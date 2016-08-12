@@ -47,7 +47,11 @@ public class commandParser {
   public void assembleCommand (String temp) {
     if (temp.indexOf(" ") != -1) {
       temp = temp.substring(temp.indexOf("`") + 1);
-      this.command = temp.substring(0, temp.indexOf(" "));
+      if (temp.indexOf(" ") != -1) {
+        this.command = temp.substring(0, temp.indexOf(" "));
+      } else {
+        this.command = temp.substring(0);
+      }
       this.postCommandRaw = temp.substring(temp.indexOf(" ") +1);
       this.postCommand = new ArrayList<String>(Arrays.asList(temp.substring(temp.indexOf(" ") +1).split(" ")));
     } else {
