@@ -123,6 +123,10 @@ public class nick_bot {
         commandParser comm = new commandParser(line);
         sendUser(comm, urban(comm));
         System.out.println("COMMAND EXECUTED: " + comm.toString());
+      } else if (line.contains("`define")) {
+        commandParser comm = new commandParser(line);
+        sendUser(comm, define(comm));
+        System.out.println("COMMAND EXECUTED: " + comm.toString());
       } else if (line.contains("`commands")) {
         commandParser comm = new commandParser(line);
         String commList = "Commands: ";
@@ -131,6 +135,7 @@ public class nick_bot {
           commList = commList.concat(temp.getCommand() + " ");
         }
         sendUser(comm, commList);
+        sendUser(comm, "Complex commands (*OP required): urban list staff sudo* reload* quit*");
         System.out.println("COMMAND EXECUTED: " + comm.toString());
       } else if (line.contains("`reload")) {
         commandParser comm = new commandParser(line);
@@ -291,6 +296,7 @@ public class nick_bot {
     return shortenedURL;
   }
 
+  // Search things on Urban Dictionary
   public static String urban(commandParser comm) {
     String name = comm.getPostCommand();
     String temp = "No definitions found for " + name;
@@ -308,6 +314,31 @@ public class nick_bot {
       String line = in.readLine();
       if (line.contains("\"definition\":")) {
         temp = line.substring(line.indexOf("definition") + 13, line.indexOf("\"", line.indexOf("definition") + 14));
+      }
+    } catch (Exception e) {
+      System.out.println(e);
+    }
+    return temp;
+  }
+
+  public static String define(commandParser comm) {
+    String name = comm.getPostCommand();
+    String temp = "No definitions found for " + name;
+    HttpURLConnection conn = null;
+    try {
+      URL url = new URL("http://www.dictionaryapi.com/api/v1/references/collegiate/xml/" + name + "?key=" + settings.getProperty("dictionary"));
+      conn = (HttpURLConnection) url.openConnection();
+      conn.setRequestMethod("GET");
+
+      BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+      String line = null;
+      while((line = in.readLine()) != null) {
+        if (line.contains("entry id")) {
+          String type = line.substring(line.indexOf("<fl>") + 4, line.indexOf("</", line.indexOf("<fl>") + 5));
+          String definition = line.substring(line.indexOf("<dt>") + 4, line.indexOf("</dt>", line.indexOf("<dt>") + 4));
+          temp = type + ": " + definition.replaceAll("<[^>]+>", "");
+          break;
+        }
       }
     } catch (Exception e) {
       System.out.println(e);

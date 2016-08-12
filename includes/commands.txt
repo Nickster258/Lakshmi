@@ -1,3 +1,4 @@
+`=Why not just use "?
 test=DUH I'M HERE
 lemon=lemon
 ping=ping pong, ... you ding dong.
@@ -14,7 +15,6 @@ israel=ISRAEL IS BEST COUNTRY
 kek=kek <- this one, kek, kek
 rekt=https://www.youtube.com/watch?v=sS_cAAAhgPM
 foo=bar
-`=Why not just use "?
 servers=Build: mc.openredstone.org - 84.215.69.184:25569, School: sc.openredstone.org - 97.89.20.163:25565, Survival: ss.openredstone.org - 162.243.90.113:25573
 snek=A long carnivorous legless reptile otherwise known as a snake. 
 tuchi=Salty Mc Saltster
