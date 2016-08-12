@@ -164,7 +164,11 @@ public class nick_bot {
         System.out.println("COMMAND EXECUTED: " + comm.toString());
       } else if (line.contains("`staff")) {
         commandParser comm = new commandParser(line);
-        postSlack("@channel " + comm.getUser() + " (" + comm.getService() + "): " + comm.getPostCommand());
+        if (comm.getPostCommand() != null) {
+          postSlack("@channel " + comm.getUser() + " (" + comm.getService() + "): " + comm.getPostCommand());
+        } else {
+          sendUser(comm, "Please include a statement!");
+        }
         System.out.println("COMMAND EXECUTED: " + comm.toString());
       } else if (line.contains("`quit")) {
         commandParser comm = new commandParser(line);
