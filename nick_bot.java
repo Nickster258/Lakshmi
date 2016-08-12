@@ -306,7 +306,6 @@ public class nick_bot {
 
       BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
       String line = in.readLine();
-      System.out.println(line);
       if (line.contains("\"definition\":")) {
         temp = line.substring(line.indexOf("definition") + 13, line.indexOf("\"", line.indexOf("definition") + 14));
       }

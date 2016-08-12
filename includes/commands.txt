@@ -18,3 +18,4 @@ foo=bar
 servers=Build: mc.openredstone.org - 84.215.69.184:25569, School: sc.openredstone.org - 97.89.20.163:25565, Survival: ss.openredstone.org - 162.243.90.113:25573
 snek=A long carnivorous legless reptile otherwise known as a snake. 
 tuchi=Salty Mc Saltster
+beans=Imma do the things that I wanna do, I ain't got a thing to prove to you, I'll eat my candy with the pork and beans, Excuse my manners if I make a scene, I ain't gonna wear the clothes that you like, I'm fine and dandy with the me inside, one look in the mirror and I'm tickled pink, I don't give a hoot about what you think, https://www.youtube.com/watch?v=PQHPYelqr0E
