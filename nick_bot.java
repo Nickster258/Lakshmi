@@ -390,7 +390,7 @@ public class nick_bot {
       if (line.contains("\"definition\":")) {
         temp = line.substring(line.indexOf("\"definition\":") + 14, line.indexOf(",\"permalink\"") - 1);
         temp.replaceAll("\\\"", "\"");
-        temp.replaceAll("[^\\{IsLetter}]+", " ");
+        temp.replaceAll("\\r\\n", "\r\n");
         if (temp.length() > 150) {
           temp = temp.substring(0, 150) + "...";
         }
