@@ -107,7 +107,7 @@ public class nick_bot {
 
   public static boolean canSpeak(String name) {
     boolean found = false;
-    if (operators.contains(name)) {
+    if (isOP(name)) {
       return true;
     }
     for (int i = 0; i < patreons.size(); i++) {
@@ -168,10 +168,14 @@ public class nick_bot {
       // Complicated commands
       } else if (line.contains("`urban")) {
         commandParser comm = new commandParser(line);
-        if (canSpeak(comm.getUser())) {
-          sendUser(comm.getService(), comm.getUser(), urban(comm.getPostCommand(0)));
+        if (comm.getPostCommandRaw().equals("NULL")) {
+          sendUser(comm.getService(), comm.getUser(), "You have to define a variable!");
         } else {
-          sendUser(comm.getService(), comm.getUser(), "You have exceeded your timeout!");
+          if (canSpeak(comm.getUser())) {
+            sendUser(comm.getService(), comm.getUser(), urban(comm.getPostCommand(0)));
+          } else {
+            sendUser(comm.getService(), comm.getUser(), "You have exceeded your timeout!");
+          }
         }
         System.out.println("COMMAND EXECUTED: " + comm.toString());
 
@@ -384,7 +388,7 @@ public class nick_bot {
       BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
       String line = in.readLine();
       if (line.contains("\"definition\":")) {
-        temp = line.substring(line.indexOf("definition") + 13, line.indexOf(",\"permalink\"") - 1);
+        temp = line.substring(line.indexOf("\"definition\":") + 14, line.indexOf(",\"permalink\"") - 1);
         temp.replaceAll("\\\"", "\"");
         temp.replaceAll("[^\\{IsLetter}]+", " ");
         if (temp.length() > 150) {

@@ -30,9 +30,9 @@ public class commandParser {
 
   public void parseServer (String temp) {
     this.service = temp.substring(1, temp.indexOf("!"));
-    temp = temp.substring(temp.indexOf(":", 1)+3);
+    temp = temp.substring(temp.indexOf(":", 1) + 3);
     this.user = temp.substring(0, temp.indexOf(":"));
-    temp = temp.substring(temp.indexOf(" ")+1);
+    temp = temp.substring(temp.indexOf(" ") + 2);
     assembleCommand(temp);
   }
 
@@ -40,11 +40,12 @@ public class commandParser {
     this.service = "IRC";
     temp = temp.substring(temp.indexOf(":") + 1);
     this.user = temp.substring(0, temp.indexOf("!"));
-    temp = temp.substring(temp.indexOf(":") + 1);
+    temp = temp.substring(temp.indexOf(":") + 2);
     assembleCommand(temp);
   }
 
   public void assembleCommand (String temp) {
+    this.postCommandRaw = "NULL";
     if (temp.indexOf(" ") != -1) {
       temp = temp.substring(temp.indexOf("`") + 1);
       if (temp.indexOf(" ") != -1) {
