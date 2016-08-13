@@ -98,8 +98,18 @@ public class nick_bot {
     return operators;
   }
 
+  public static boolean isOP(String name) {
+    if (operators.contains(name)) {
+      return true;
+    }
+    return false;
+  }
+
   public static boolean canSpeak(String name) {
     boolean found = false;
+    if (operators.contains(name)) {
+      return true;
+    }
     for (int i = 0; i < patreons.size(); i++) {
       users temp = patreons.get(i);
       if (temp.getName().equals(name)) {
@@ -158,12 +168,22 @@ public class nick_bot {
       // Complicated commands
       } else if (line.contains("`urban")) {
         commandParser comm = new commandParser(line);
-        sendUser(comm.getService(), comm.getUser(), urban(comm.getPostCommand(0)));
+        if (canSpeak(comm.getUser())) {
+          sendUser(comm.getService(), comm.getUser(), urban(comm.getPostCommand(0)));
+        } else {
+          sendUser(comm.getService(), comm.getUser(), "You have exceeded your timeout!");
+        }
         System.out.println("COMMAND EXECUTED: " + comm.toString());
+
       } else if (line.contains("`define")) {
         commandParser comm = new commandParser(line);
-        sendUser(comm.getService(), comm.getUser(), define(comm.getPostCommand(0)));
+        if (canSpeak(comm.getUser())) {
+          sendUser(comm.getService(), comm.getUser(), define(comm.getPostCommand(0)));
+        } else {
+          sendUser(comm.getService(), comm.getUser(), "You have exceeded your timeout!");
+        }
         System.out.println("COMMAND EXECUTED: " + comm.toString());
+
       } else if (line.contains("`commands")) {
         commandParser comm = new commandParser(line);
         String commList = "Commands: ";
@@ -172,33 +192,23 @@ public class nick_bot {
           commList = commList.concat(temp.getCommand() + " ");
         }
         sendUser(comm.getService(), comm.getUser(), commList);
-        sendUser(comm.getService(), comm.getUser(), "Complex commands (*OP required): urban define list staff sudo* reload* quit*");
+        sendUser(comm.getService(), comm.getUser(), "Complex commands (*OP required): urban define staff sudo* reload* quit*");
         System.out.println("COMMAND EXECUTED: " + comm.toString());
-      } else if (line.contains("`reload")) {
+
+      /*} else if (line.contains("`list")) {
         commandParser comm = new commandParser(line);
-        if (operators.contains(comm.getUser())) {
-          reload();
+        if (canSpeak(comm.getUser())) {
+          assembleUsers();
+          sendUser(comm.getService(), comm.getUser(), OREBuild.toString());
+          sendUser(comm.getService(), comm.getUser(), ORESchool.toString());
+          sendUser(comm.getService(), comm.getUser(), ORESurvival.toString());
+          sendUser(comm.getService(), comm.getUser(), ORESkyblock.toString());
+          sendUser(comm.getService(), comm.getUser(), IRC.toString());
         } else {
-          sendUser(comm.getService(), comm.getUser(), "You are not authorized!");
+          sendUser(comm.getService(), comm.getUser(), "You have exceeded your timeout!");
         }
-        System.out.println("COMMAND EXECUTED: " + comm.toString());
-      } else if (line.contains("`list")) {
-        commandParser comm = new commandParser(line);
-        assembleUsers();
-        sendUser(comm.getService(), comm.getUser(), OREBuild.toString());
-        sendUser(comm.getService(), comm.getUser(), ORESchool.toString());
-        sendUser(comm.getService(), comm.getUser(), ORESurvival.toString());
-        sendUser(comm.getService(), comm.getUser(), ORESkyblock.toString());
-        sendUser(comm.getService(), comm.getUser(), IRC.toString());
-        System.out.println("COMMAND EXECUTED: " + comm.toString());
-      } else if (line.contains("`sudo")) {
-        commandParser comm = new commandParser(line);
-        if (operators.contains(comm.getUser())) {
-          bot.sendRaw(comm.getPostCommandRaw());
-        } else {
-          sendUser(comm.getService(), comm.getUser(), "You are not authorized!");
-        }
-        System.out.println("COMMAND EXECUTED: " + comm.toString());
+        System.out.println("COMMAND EXECUTED: " + comm.toString());*/
+
       } else if (line.contains("`staff")) {
         commandParser comm = new commandParser(line);
         if (comm.getPostCommandRaw() != null) {
@@ -207,9 +217,29 @@ public class nick_bot {
           sendUser(comm.getService(), comm.getUser(), "Please include a statement!");
         }
         System.out.println("COMMAND EXECUTED: " + comm.toString());
+
+      // OP only commands
+      } else if (line.contains("`reload")) {
+        commandParser comm = new commandParser(line);
+        if (isOP(comm.getUser())) {
+          reload();
+        } else {
+          sendUser(comm.getService(), comm.getUser(), "You are not authorized!");
+        }
+        System.out.println("COMMAND EXECUTED: " + comm.toString());
+
+      } else if (line.contains("`sudo")) {
+        commandParser comm = new commandParser(line);
+        if (isOP(comm.getUser())) {
+          bot.sendRaw(comm.getPostCommandRaw());
+        } else {
+          sendUser(comm.getService(), comm.getUser(), "You are not authorized!");
+        }
+        System.out.println("COMMAND EXECUTED: " + comm.toString());
+
       } else if (line.contains("`quit")) {
         commandParser comm = new commandParser(line);
-        if (operators.contains(comm.getUser())) {
+        if (isOP(comm.getUser())) {
           quit();
           break;
         } else {
@@ -223,7 +253,7 @@ public class nick_bot {
   }
 
   public static void sendUser(String service, String user, String line) {
-    if (service=="IRC") {
+    if (service.equals("IRC")) {
       bot.sendRaw("PRIVMSG " + user + " " + line);
     } else {
       bot.sendRaw("PRIVMSG " + service + " /msg " + user + " " + line);

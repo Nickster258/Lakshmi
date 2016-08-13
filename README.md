@@ -15,6 +15,7 @@ This is my custom IRC bot project. It is capable of doing a few things at the mo
 - [X] Post Slack messages
 - [X] Add an anti-spam with users.java
 - [X] Add an ArrayList for arguments under commandParser.
+- [ ] Add an imgur reposter to non-imgur URLs.
 - [ ] Add a logging system.
 - [ ] Figure out a way to handle custom methods for a command
 - [ ] Add a proper commandHandler system including trigger events
