@@ -395,6 +395,9 @@ public class nick_bot {
         if (temp.length() > 150) {
           temp = temp.substring(0, 150) + "...";
         }
+        temp = temp.replace("\\\"", "\"");
+        temp = temp.replace("\\r", " ");
+        temp = temp.replace("\\n", " ");
       }
     } catch (Exception e) {
       System.out.println(e);
