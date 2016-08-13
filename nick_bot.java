@@ -20,16 +20,16 @@ import java.util.Arrays;
 
 public class nick_bot {
 
-  private static ArrayList <commandMore> commandsMore = new ArrayList <commandMore> ();
-  private static ArrayList <command>     commands     = new ArrayList <command>     ();
-  public  static ArrayList <users>       patreons     = new ArrayList <users>       ();
-  private static ArrayList <String>      operators    = new ArrayList <String>      ();
-  private static ArrayList <String>      IRC          = new ArrayList <String>      ();
-  private static ArrayList <String>      OREBuild     = new ArrayList <String>      ();
-  private static ArrayList <String>      ORESchool    = new ArrayList <String>      ();
-  private static ArrayList <String>      ORESurvival  = new ArrayList <String>      ();
-  private static ArrayList <String>      ORESkyblock  = new ArrayList <String>      ();
-  private static ArrayList <String>      Servers      = new ArrayList <String>      ();
+  public static ArrayList <commandMore> commandsMore = new ArrayList <commandMore> ();
+  public static ArrayList <command>     commands     = new ArrayList <command>     ();
+  public static ArrayList <users>       patreons     = new ArrayList <users>       ();
+  public static ArrayList <String>      operators    = new ArrayList <String>      ();
+  public static ArrayList <String>      IRC          = new ArrayList <String>      ();
+  public static ArrayList <String>      OREBuild     = new ArrayList <String>      ();
+  public static ArrayList <String>      ORESchool    = new ArrayList <String>      ();
+  public static ArrayList <String>      ORESurvival  = new ArrayList <String>      ();
+  public static ArrayList <String>      ORESkyblock  = new ArrayList <String>      ();
+  public static ArrayList <String>      Servers      = new ArrayList <String>      ();
 
   // Fetching global variables from "settings.properties"
   private static Properties settings = new Properties();
@@ -49,6 +49,8 @@ public class nick_bot {
   // Setting bot
   private static IRCBot bot = new IRCBot();// = new IRCBot(settings.getProperty("server"), Integer.parseInt(settings.getProperty("port")), settings.getProperty("nick"), settings.getProperty("channel"), settings.getProperty("pass"));
 
+  private static timeout thread = new timeout();
+
   private static void loadBot() {
     bot = new IRCBot(settings.getProperty("server"), Integer.parseInt(settings.getProperty("port")), settings.getProperty("nick"), settings.getProperty("channel"), settings.getProperty("pass"));
   }
@@ -58,15 +60,14 @@ public class nick_bot {
     loadSettings();
     assembleOPs();
     assembleCommands();
-    startAntispam();
+    thread.start();
     loadBot();
     bot.connect();
     listener();
   }
 
-  public static void startAntispam() {
-    timeout thread = new timeout();
-    thread.start();
+  public static void resetAntispam() {
+    patreons.clear();
   }
 
   // KeepAlive
@@ -87,11 +88,10 @@ public class nick_bot {
     return false;
   }
 
-  public static ArrayList<String> getVals(String line) {
-    String temp = line.substring(line.indexOf("`")+1);
+  public static ArrayList<String> getVals(String command) {
     for (int i = 0; i<commands.size(); i++) {
       command comm = commands.get(i);
-      if (comm.getCommand().equals(temp)) {
+      if (comm.getCommand().equals(command)) {
         return comm.getVals();
       }
     }
@@ -127,6 +127,7 @@ public class nick_bot {
 
   public static void reload() {
     bot.disconnect();
+    resetAntispam();
     loadSettings();
     assembleOPs();
     assembleCommands();
@@ -145,7 +146,7 @@ public class nick_bot {
       } else if (containsCommand(line)) {
         commandParser comm = new commandParser(line);
         if (canSpeak(comm.getUser())) {
-          ArrayList<String> vals = getVals(line);
+          ArrayList<String> vals = getVals(comm.getCommand());
           for (int i = 0; i < vals.size(); i++) {
             sendUser(comm.getService(), comm.getUser(), vals.get(i));
           }
@@ -232,6 +233,7 @@ public class nick_bot {
   // Method to gracefully shutdown the bot
   public static void quit() {
     bot.sendRaw("QUIT Time for me to head out!");
+    thread.interrupt();
   }
 
   // Generates the list of users across IRC and the servers

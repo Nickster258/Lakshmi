@@ -10,7 +10,7 @@ public class timeout extends Thread {
           nick_bot.patreons.remove(i);
           nick_bot.patreons.add(temp);
         }
-        Thread.sleep(10000);
+        Thread.sleep(12000);
       } catch (InterruptedException e) {
         System.out.println(e);
       }
