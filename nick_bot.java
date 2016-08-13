@@ -20,7 +20,6 @@ import java.util.Arrays;
 
 public class nick_bot {
 
-  public static ArrayList <commandMore> commandsMore = new ArrayList <commandMore> ();
   public static ArrayList <command>     commands     = new ArrayList <command>     ();
   public static ArrayList <users>       patreons     = new ArrayList <users>       ();
   public static ArrayList <String>      operators    = new ArrayList <String>      ();
@@ -167,7 +166,12 @@ public class nick_bot {
 
       // Complicated commands
       } else if (line.contains("http://") || line.contains("https://")) {
-        bot.sendRaw("PRIVMSG " + settings.getProperty("channel") + " " + shorten(line));
+        if (line.contains("#")) {
+          bot.sendRaw("PRIVMSG " + settings.getProperty("channel") + " " + shorten(line));
+        } else {
+          lineParser temp = new lineParser(line);
+          sendUser(temp.getService(), temp.getUser(), shorten(line));
+        }
 
       } else if (line.contains("`urban")) {
         commandParser comm = new commandParser(line);
