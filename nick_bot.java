@@ -166,6 +166,9 @@ public class nick_bot {
         System.out.println("COMMAND EXECUTED: " + comm.toString());
 
       // Complicated commands
+      } else if (line.contains("http://") || line.contains("https://")) {
+        bot.sendRaw("PRIVMSG " + settings.getProperty("channel") + " " + shorten(line));
+
       } else if (line.contains("`urban")) {
         commandParser comm = new commandParser(line);
         if (comm.getPostCommandRaw().equals("NULL")) {
@@ -335,15 +338,15 @@ public class nick_bot {
     if (domain.indexOf("/") != -1) {
       domain = domain.substring(0, domain.indexOf("/"));
     }
-    System.out.println(domain);
+    //System.out.println(domain);
     String shortenedURL = null;
-    boolean reachable = false;
+/*    boolean reachable = false;
     try {
       reachable = InetAddress.getByName(domain).isReachable(500);
     } catch (Exception e) {
       System.out.println(e);
     }
-    if (reachable) {
+    if (reachable) {*/
       try {
         if (URL.contains(" ")) {
           URL = URLEncoder.encode(URL.substring(0, URL.indexOf(" ")), "UTF-8");
@@ -367,7 +370,7 @@ public class nick_bot {
         in.close();
       } catch (Exception e) {
         System.out.println(e);
-      }
+      //}
     }
     return shortenedURL;
   }
