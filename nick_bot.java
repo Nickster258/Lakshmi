@@ -392,9 +392,6 @@ public class nick_bot {
       String line = in.readLine();
       if (line.contains("\"definition\":")) {
         temp = line.substring(line.indexOf("\"definition\":") + 14, line.indexOf(",\"permalink\"") - 1);
-        temp.replaceAll("\\\"", "\"");
-        temp.replaceAll("\\r", "\r");
-        temp.replaceAll("\\n", "\n");
         if (temp.length() > 150) {
           temp = temp.substring(0, 150) + "...";
         }
@@ -402,7 +399,7 @@ public class nick_bot {
     } catch (Exception e) {
       System.out.println(e);
     }
-    return temp;
+    return word + ": " + temp;
   }
 
   public static String define(String word) {
@@ -426,7 +423,7 @@ public class nick_bot {
     } catch (Exception e) {
       System.out.println(e);
     }
-    return temp;
+    return word + ": " + temp;
   }
 
   // Simple method to send a Slack message to the specified channel
