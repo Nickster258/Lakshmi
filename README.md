@@ -13,8 +13,8 @@ This is my custom IRC bot project. It is capable of doing a few things at the mo
 - [ ] Implement mathematical functions (`calc 1*1)
 - [X] Finalize URL shortener
 - [X] Post Slack messages
-- [ ] Add an anti-spam with user.java
-- [ ] Add an ArrayList for arguments under commandParsery
+- [X] Add an anti-spam with users.java
+- [X] Add an ArrayList for arguments under commandParser.
 - [ ] Add a logging system.
 - [ ] Figure out a way to handle custom methods for a command
 - [ ] Add a proper commandHandler system including trigger events
