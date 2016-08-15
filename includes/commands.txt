@@ -24,3 +24,6 @@ cca=carry cancer ladder
 spam=spam spam spam spam spam spam spam spam spam spam spam spam spam spam spam spam spam spam spam spam spam spam spam spam spam spam spam spam spam spam spam spam spam spam spam spam spam spam spam spam spam spam spam spam spam spam spam spam spam spam spam spam spam spam spam spam spam spam spam spam spam spam spam spam spam spam spam spam spam spam spam spam spam spam spam spam spam spam spam spam spam spam spam spam spam spam spam spam spam spam spam spam
 lag=Oh IDK probably caused by Maze.
 maze="1 giant sphere of lava coming right up..."
+join=Yes we need fun commands back.
+leave=What did I just say?
+nickster=Ugh why did you call me?

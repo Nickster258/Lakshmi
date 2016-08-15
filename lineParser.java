@@ -10,6 +10,7 @@ public class lineParser {
   public lineParser (String raw) {
     this.raw = raw;
     this.pm = !raw.contains("#");
+    String temp = raw.replaceAll("[\\p{Cntrl}\\p{Cc}]","");
     if (raw.startsWith("shinobi.nonemu.ninja", 1) || raw.startsWith("services.nonemu.ninja", 1) || raw.startsWith("NickServ", 1) || raw.startsWith("ChanServ", 1)) {
       this.status = true;
     } else if (raw.startsWith("OREBuild",1)) {
@@ -27,7 +28,7 @@ public class lineParser {
 
   public void parseLine (String temp) {
     this.service = temp.substring(1, temp.indexOf("!"));
-    temp = temp.substring(temp.indexOf(":", 1)+4);
+    temp = temp.substring(temp.indexOf(":", 1)+3);
     this.user = temp.substring(0, temp.indexOf(":"));
     this.msg = temp.substring(temp.indexOf(" ")+1);
   }

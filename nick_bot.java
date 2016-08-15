@@ -167,10 +167,15 @@ public class nick_bot {
       // Complicated commands
       } else if (line.contains("http://") || line.contains("https://")) {
         if (line.contains("#")) {
+          lineParser temp = new lineParser(line);
+          System.out.println(temp.toString());
           bot.sendRaw("PRIVMSG " + settings.getProperty("channel") + " " + shorten(line));
         } else {
           lineParser temp = new lineParser(line);
-          sendUser(temp.getService(), temp.getUser(), shorten(line));
+          System.out.println(temp.toString());
+          if (shorten(line) != null) {
+            sendUser(temp.getService(), temp.getUser(), shorten(line));
+          }
         }
 
       } else if (line.contains("`urban")) {
@@ -401,7 +406,7 @@ public class nick_bot {
         }
         temp = temp.replace("\\\"", "\"");
         temp = temp.replace("\\r", " ");
-        temp = temp.replace("\\n", " ");
+        temp = temp.replace("\\n", ". ");
       }
     } catch (Exception e) {
       System.out.println(e);
