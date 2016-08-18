@@ -1,7 +1,7 @@
 `=Why not just use "?
 test=DUH I'M HERE
 aero=lemon
-lemon=lemon
+lemon=aero
 ping=ping pong, ... you ding dong.
 hoe=Never waste your diamonds on a hoe.
 aww=Eww no.
@@ -27,3 +27,5 @@ maze="1 giant sphere of lava coming right up..."
 join=Yes we need fun commands back.
 leave=What did I just say?
 nickster=Ugh why did you call me?
+rtfs="Read the Fucking Slack!" What originally began as a Staff joke RTFS devolved into anything that one has not been actively interested in or "out-of-touch"., "God you still don't know what is going on? RTFS" - "You are so out-of-touch!"
+nicenick=That sexy beast of a guy!, What a Nick!

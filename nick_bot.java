@@ -166,17 +166,26 @@ public class nick_bot {
 
       // Complicated commands
       } else if (line.contains("http://") || line.contains("https://")) {
-        if (line.contains("#")) {
-          lineParser temp = new lineParser(line);
-          System.out.println(temp.toString());
-          bot.sendRaw("PRIVMSG " + settings.getProperty("channel") + " " + shorten(line));
-        } else {
+        if (!line.contains("#")) {
           lineParser temp = new lineParser(line);
           System.out.println(temp.toString());
           if (shorten(line) != null) {
             sendUser(temp.getService(), temp.getUser(), shorten(line));
           }
         }
+
+      } else if (line.contains("`status")) {
+        commandParser comm = new commandParser(line);
+        if (comm.getPostCommandRaw().equals("NULL")) {
+          sendUser(comm.getService(), comm.getUser(), "You have to define a server!");
+        } else {
+          if (canSpeak(comm.getUser())) {
+            sendUser(comm.getService(), comm.getUser(), status(comm.getPostCommand(0)));
+          } else {
+            sendUser(comm.getService(), comm.getUser(), "You have exceeded your timeout!");
+          }
+        }
+        System.out.println("COMMAND EXECUTED: " + comm.toString());
 
       } else if (line.contains("`urban")) {
         commandParser comm = new commandParser(line);
@@ -193,10 +202,14 @@ public class nick_bot {
 
       } else if (line.contains("`define")) {
         commandParser comm = new commandParser(line);
-        if (canSpeak(comm.getUser())) {
-          sendUser(comm.getService(), comm.getUser(), define(comm.getPostCommand(0)));
+        if (comm.getPostCommandRaw().equals("NULL")) {
+          sendUser(comm.getService(), comm.getUser(), "You have to define a variable!");
         } else {
+          if (canSpeak(comm.getUser())) {
+            sendUser(comm.getService(), comm.getUser(), define(comm.getPostCommand(0)));
+          } else {
           sendUser(comm.getService(), comm.getUser(), "You have exceeded your timeout!");
+          }
         }
         System.out.println("COMMAND EXECUTED: " + comm.toString());
 
@@ -437,6 +450,29 @@ public class nick_bot {
     }
     return word + ": " + temp;
   }
+
+  public static String status(String server) {
+    String temp = server + " not found";
+    HttpURLConnection conn = null;
+    try {
+      URL url = new URL("http://status.openredstone.org/" + server + ".php");
+      conn = (HttpURLConnection) url.openConnection();
+      conn.setRequestMethod("GET");
+
+      BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+      String line = null;
+      while((line = in.readLine()) != null) {
+        if (!line.contains("File not found")) {
+          temp = line;
+        }
+        break;
+      }
+    } catch (Exception e) {
+      System.out.println(e);
+    }
+    return temp;
+  }
+
 
   // Simple method to send a Slack message to the specified channel
   public static void postSlack(String message) {
