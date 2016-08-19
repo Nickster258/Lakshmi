@@ -58,7 +58,8 @@ public class nick_bot {
   public static void main(String[] args) {
     loadSettings();
     assembleOPs();
-    assembleCommands();
+    
+assembleCommands();
     thread.start();
     loadBot();
     bot.connect();
@@ -234,7 +235,7 @@ public class nick_bot {
           commList = commList.concat(temp.getCommand() + " ");
         }
         sendUser(comm.getService(), comm.getUser(), commList);
-        sendUser(comm.getService(), comm.getUser(), "Complex commands (*OP required): urban define staff status sudo* reload* quit*");
+        sendUser(comm.getService(), comm.getUser(), "Complex commands (*OP required): urban define staff status uuid sudo* reload* quit*");
         System.out.println("COMMAND EXECUTED: " + comm.toString());
 
       /*} else if (line.contains("`list")) {
@@ -567,12 +568,14 @@ public class nick_bot {
       int id = 0;
       commands.clear();
       while ((command = in.readLine()) != null) {
-        id++;
-        String com = command.substring(0, command.indexOf("="));
-        ArrayList<String> val = new ArrayList<String>(Arrays.asList(command.substring(command.indexOf("=") +1).split(", ")));
-        command comm = new command(id, com, val);
-        commands.add(comm);
-        System.out.println("LOADED COMMAND: " + comm.toString());
+        if (!command.startsWith("#") && command.length()>2) {
+          id++;
+          String com = command.substring(0, command.indexOf("="));
+          ArrayList<String> val = new ArrayList<String>(Arrays.asList(command.substring(command.indexOf("=") +1).split(", ")));
+          command comm = new command(id, com, val);
+          commands.add(comm);
+          System.out.println("LOADED COMMAND: " + comm.toString());
+        }
       }
 
       in.close();
