@@ -1,6 +1,6 @@
 # RANDOM COMMANDS
 `=Why not just use "?
-test=DUH I'M HERE
+test=... Why?
 aero=lemon
 lemon=aero
 ping=ping pong, ... you ding dong.
