@@ -1,3 +1,5 @@
+package com.nickster258.nick_bot.Parsers;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 

@@ -1,3 +1,8 @@
+package com.nickster258.nick_bot;
+import com.nickster258.nick_bot.Assemblers.*;
+import com.nickster258.nick_bot.Parsers.*;
+import com.nickster258.nick_bot.IRCHandler.*;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.OutputStream;
@@ -34,7 +39,7 @@ public class main {
   private static Properties SETTINGS = new Properties();
   private static void loadSettings () {
     try {
-      InputStream input = new FileInputStream("includes/settings.properties");
+      InputStream input = new FileInputStream("../resources/settings.properties");
       SETTINGS.load(input);
       input.close();
     } catch (IOException e) {
@@ -541,7 +546,7 @@ public class main {
     try {
       OPERATORS.clear();
       String operator;
-      BufferedReader in = new BufferedReader(new FileReader("includes/operators.txt"));
+      BufferedReader in = new BufferedReader(new FileReader("../resources/operators.txt"));
 
       while ((operator = in.readLine()) != null) {
           OPERATORS.add(operator);
@@ -560,7 +565,7 @@ public class main {
   public static void assembleCommands () {
     try {
       String command;
-      BufferedReader in = new BufferedReader(new FileReader("includes/commands.txt"));
+      BufferedReader in = new BufferedReader(new FileReader("../resources/commands.txt"));
       int id = 0;
       COMMANDS.clear();
       while ((command = in.readLine()) != null) {

@@ -1,3 +1,5 @@
+package com.nickster258.nick_bot.Parsers;
+
 public class LineParser {
 
   String raw;

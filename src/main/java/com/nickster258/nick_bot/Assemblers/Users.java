@@ -1,6 +1,8 @@
+package com.nickster258.nick_bot.Assemblers;
+
 public class Users {
 
-  int timeout;
+  public int timeout;
   String name;
 
   public Users (String name) {

@@ -1,3 +1,5 @@
+package com.nickster258.nick_bot.Assemblers;
+
 import java.util.ArrayList;
 
 public class Command {
