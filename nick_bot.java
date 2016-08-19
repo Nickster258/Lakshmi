@@ -176,14 +176,14 @@ public class nick_bot {
 
       } else if (line.contains("`uuid")) {
         commandParser comm = new commandParser(line);
-        if (comm.getPostCommandRaw().equals("NULL")) {
-          sendUser(comm.getService(), comm.getUser(), "You have to user!");
-        } else {
-          if (canSpeak(comm.getUser())) {
-            sendUser(comm.getService(), comm.getUser(), uuid(comm.getPostCommand(0)));
+        if (canSpeak(comm.getUser())) {
+          if (comm.getPostCommandRaw().equals("NULL")) {
+            sendUser(comm.getService(), comm.getUser(), uuid(comm.getUser()));
           } else {
-            sendUser(comm.getService(), comm.getUser(), "You have exceeded your timeout!");
+            sendUser(comm.getService(), comm.getUser(), uuid(comm.getPostCommand(0)));
           }
+        } else {
+          sendUser(comm.getService(), comm.getUser(), "You have exceeded your timeout!");
         }
         System.out.println("COMMAND EXECUTED: " + comm.toString());
 
