@@ -15,7 +15,7 @@ This is my custom IRC bot project. It is capable of doing a few things at the mo
 - [X] Post Slack messages
 - [X] Add an anti-spam with users.java
 - [X] Add an ArrayList for arguments under commandParser.
-- [ ] Fetch UUID for a name.
+- [X] Fetch UUID for a name.
 - [ ] Fetch name history of a user.
 - [ ] Implement a scheduler system.
 - [ ] Implement a "remind me" system.
