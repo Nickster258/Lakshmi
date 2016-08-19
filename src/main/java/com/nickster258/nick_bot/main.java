@@ -192,6 +192,19 @@ public class main {
         }
         System.out.println("COMMAND EXECUTED: " + comm.toString());
 
+      } else if (line.contains("`history")) {
+        CommandParser comm = new CommandParser(line);
+        if (canSpeak(comm.getUser())) {
+          if (comm.getPostCommandRaw().equals("NULL")) {
+            sendUser(comm.getService(), comm.getUser(), history(comm.getUser()));
+          } else {
+            sendUser(comm.getService(), comm.getUser(), history(comm.getPostCommand(0)));
+          }
+        } else {
+          sendUser(comm.getService(), comm.getUser(), "You have exceeded your timeout!");
+        }
+        System.out.println("COMMAND EXECUTED: " + comm.toString());
+
       } else if (line.contains("`status")) {
         CommandParser comm = new CommandParser(line);
         if (comm.getPostCommandRaw().equals("NULL")) {
@@ -488,6 +501,36 @@ public class main {
     return temp;
   }
 
+  public static String history(String name) {
+    String temp = "No history for " + name;
+    HttpURLConnection conn = null;
+    try {
+      URL url = new URL("https://api.mojang.com/user/profiles/" + uuid(name) + "/names");
+      conn = (HttpURLConnection) url.openConnection();
+      conn.setRequestMethod("GET");
+
+      BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+      String line = null;
+      while((line = in.readLine()) != null) {
+        line = line;
+        break;
+      }
+      boolean contains = true;
+      temp = "Name history: ";
+      while (contains) {
+        System.out.println(line);
+        line = line.substring(line.indexOf("\"name\":") + 8);
+        temp = temp.concat(line.substring(0,line.indexOf("\"")) + ", ");
+        if (!line.contains("name")) {
+          contains = false;
+        }
+      }
+
+    } catch (Exception e) {
+      System.out.println(e);
+    }
+    return temp;
+  }
 
   public static String status(String server) {
     String temp = server + " not found";
