@@ -525,6 +525,7 @@ public class main {
           contains = false;
         }
       }
+      temp = temp.substring(0, temp.lastIndexOf(","));
 
     } catch (Exception e) {
       System.out.println(e);
