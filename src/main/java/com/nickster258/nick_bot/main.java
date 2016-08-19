@@ -1,7 +1,7 @@
 package com.nickster258.nick_bot;
-import com.nickster258.nick_bot.Assemblers.*;
-import com.nickster258.nick_bot.Parsers.*;
-import com.nickster258.nick_bot.IRCHandler.*;
+import com.nickster258.nick_bot.assemblers.*;
+import com.nickster258.nick_bot.parsers.*;
+import com.nickster258.nick_bot.handlers.*;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;

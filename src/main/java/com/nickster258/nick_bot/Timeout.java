@@ -1,5 +1,5 @@
 package com.nickster258.nick_bot;
-import com.nickster258.nick_bot.Assemblers.*;
+import com.nickster258.nick_bot.assemblers.*;
 
 public class Timeout extends Thread {
   public void run() {
