@@ -20,66 +20,65 @@ import java.util.Arrays;
 
 public class nick_bot {
 
-  public static ArrayList <command>     commands     = new ArrayList <command>     ();
-  public static ArrayList <users>       patreons     = new ArrayList <users>       ();
-  public static ArrayList <String>      operators    = new ArrayList <String>      ();
+  public static ArrayList <command>     COMMANDS     = new ArrayList <command>     ();
+  public static ArrayList <users>       PATREONS     = new ArrayList <users>       ();
+  public static ArrayList <String>      OPERATORS    = new ArrayList <String>      ();
   public static ArrayList <String>      IRC          = new ArrayList <String>      ();
-  public static ArrayList <String>      OREBuild     = new ArrayList <String>      ();
-  public static ArrayList <String>      ORESchool    = new ArrayList <String>      ();
-  public static ArrayList <String>      ORESurvival  = new ArrayList <String>      ();
-  public static ArrayList <String>      ORESkyblock  = new ArrayList <String>      ();
-  public static ArrayList <String>      Servers      = new ArrayList <String>      ();
+  public static ArrayList <String>      OREBUILD     = new ArrayList <String>      ();
+  public static ArrayList <String>      ORESCHOOL    = new ArrayList <String>      ();
+  public static ArrayList <String>      ORESURVIVAL  = new ArrayList <String>      ();
+  public static ArrayList <String>      ORESKYBLOCK  = new ArrayList <String>      ();
+  public static ArrayList <String>      SERVERS      = new ArrayList <String>      ();
 
   // Fetching global variables from "settings.properties"
-  private static Properties settings = new Properties();
+  private static Properties SETTINGS = new Properties();
   private static void loadSettings () {
     try {
       InputStream input = new FileInputStream("includes/settings.properties");
-      settings.load(input);
+      SETTINGS.load(input);
       input.close();
     } catch (IOException e) {
       System.out.println(e);
     }
   }
   private static String getProperty (String key) {
-    return settings.getProperty(key);
+    return SETTINGS.getProperty(key);
   }
 
   // Setting bot
-  private static IRCBot bot = new IRCBot();// = new IRCBot(settings.getProperty("server"), Integer.parseInt(settings.getProperty("port")), settings.getProperty("nick"), settings.getProperty("channel"), settings.getProperty("pass"));
+  private static IRCBot BOT = new IRCBot();
 
   private static timeout thread = new timeout();
 
   private static void loadBot() {
-    bot = new IRCBot(settings.getProperty("server"), Integer.parseInt(settings.getProperty("port")), settings.getProperty("nick"), settings.getProperty("channel"), settings.getProperty("pass"));
+    BOT = new IRCBot(SETTINGS.getProperty("server"), Integer.parseInt(SETTINGS.getProperty("port")), SETTINGS.getProperty("nick"), SETTINGS.getProperty("channel"), SETTINGS.getProperty("pass"));
   }
 
   // Main
   public static void main(String[] args) {
     loadSettings();
     assembleOPs();
-    
-assembleCommands();
+    assembleCommands();
     thread.start();
     loadBot();
-    bot.connect();
+    BOT.connect();
     listener();
   }
 
   public static void resetAntispam() {
-    patreons.clear();
+    PATREONS.clear();
   }
 
   // KeepAlive
   public static void keepAlive(String line) {
-    bot.sendRaw("PONG " + line.substring(5));
+    BOT.sendRaw("PONG " + line.substring(5));
   }
 
   public static boolean containsCommand(String line) {
     if (line.contains("`")) {
       String temp = line.substring(line.indexOf("`")+1);
-      for (int i = 0; i<commands.size(); i++) {
-        command comm = commands.get(i);
+      for (int i = 0; i<COMMANDS.size(); i++) {
+        command comm = COMMANDS.get(i);
         if (comm.getCommand().equals(temp)) {
           return true;
         }
@@ -89,17 +88,17 @@ assembleCommands();
   }
 
   public static ArrayList<String> getVals(String command) {
-    for (int i = 0; i<commands.size(); i++) {
-      command comm = commands.get(i);
+    for (int i = 0; i<COMMANDS.size(); i++) {
+      command comm = COMMANDS.get(i);
       if (comm.getCommand().equals(command)) {
         return comm.getVals();
       }
     }
-    return operators;
+    return OPERATORS;
   }
 
   public static boolean isOP(String name) {
-    if (operators.contains(name)) {
+    if (OPERATORS.contains(name)) {
       return true;
     }
     return false;
@@ -110,12 +109,12 @@ assembleCommands();
     if (isOP(name)) {
       return true;
     }
-    for (int i = 0; i < patreons.size(); i++) {
-      users temp = patreons.get(i);
+    for (int i = 0; i < PATREONS.size(); i++) {
+      users temp = PATREONS.get(i);
       if (temp.getName().equals(name)) {
         temp.timeout++;
-        patreons.remove(i);
-        patreons.add(temp);
+        PATREONS.remove(i);
+        PATREONS.add(temp);
         found = true;
       }
     }
@@ -123,11 +122,11 @@ assembleCommands();
     if (!found) {
       users temp = new users(name);
       temp.timeout++;
-      patreons.add(temp);
+      PATREONS.add(temp);
     }
 
-    for (int i = 0; i < patreons.size(); i++) {
-      users temp = patreons.get(i);
+    for (int i = 0; i < PATREONS.size(); i++) {
+      users temp = PATREONS.get(i);
       if ((temp.getName().equals(name)) && (temp.timeout < 6 )) {
         return true;
       }
@@ -136,23 +135,23 @@ assembleCommands();
   }
 
   public static void reload() {
-    bot.disconnect();
+    BOT.disconnect();
     resetAntispam();
     loadSettings();
     assembleOPs();
     assembleCommands();
     loadBot();
-    bot.connect();
+    BOT.connect();
   }
 
   // Listener
   public static void listener() {
     String line = null;
-    while ((line = bot.readLine( )) != null) {
+    while ((line = BOT.readLine( )) != null) {
       if (line.contains("PING")) {
         keepAlive(line);
 
-      // Basic commands
+      // Basic COMMANDS
       } else if (containsCommand(line)) {
         commandParser comm = new commandParser(line);
         if (canSpeak(comm.getUser())) {
@@ -165,7 +164,7 @@ assembleCommands();
         }
         System.out.println("COMMAND EXECUTED: " + comm.toString());
 
-      // Complicated commands
+      // Complicated COMMANDS
       } else if (line.contains("http://") || line.contains("https://")) {
         if (!line.contains("#")) {
           lineParser temp = new lineParser(line);
@@ -230,8 +229,8 @@ assembleCommands();
       } else if (line.contains("`commands")) {
         commandParser comm = new commandParser(line);
         String commList = "Commands: ";
-        for (int i = 0; i < commands.size(); i++) {
-          command temp = commands.get(i);
+        for (int i = 0; i < COMMANDS.size(); i++) {
+          command temp = COMMANDS.get(i);
           commList = commList.concat(temp.getCommand() + " ");
         }
         sendUser(comm.getService(), comm.getUser(), commList);
@@ -242,10 +241,10 @@ assembleCommands();
         commandParser comm = new commandParser(line);
         if (canSpeak(comm.getUser())) {
           assembleUsers();
-          sendUser(comm.getService(), comm.getUser(), OREBuild.toString());
-          sendUser(comm.getService(), comm.getUser(), ORESchool.toString());
-          sendUser(comm.getService(), comm.getUser(), ORESurvival.toString());
-          sendUser(comm.getService(), comm.getUser(), ORESkyblock.toString());
+          sendUser(comm.getService(), comm.getUser(), OREBUILD.toString());
+          sendUser(comm.getService(), comm.getUser(), ORESCHOOL.toString());
+          sendUser(comm.getService(), comm.getUser(), ORESURVIVAL.toString());
+          sendUser(comm.getService(), comm.getUser(), ORESKYBLOCK.toString());
           sendUser(comm.getService(), comm.getUser(), IRC.toString());
         } else {
           sendUser(comm.getService(), comm.getUser(), "You have exceeded your timeout!");
@@ -274,7 +273,7 @@ assembleCommands();
       } else if (line.contains("`sudo")) {
         commandParser comm = new commandParser(line);
         if (isOP(comm.getUser())) {
-          bot.sendRaw(comm.getPostCommandRaw());
+          BOT.sendRaw(comm.getPostCommandRaw());
         } else {
           sendUser(comm.getService(), comm.getUser(), "You are not authorized!");
         }
@@ -297,73 +296,70 @@ assembleCommands();
 
   public static void sendUser(String service, String user, String line) {
     if (service.equals("IRC")) {
-      bot.sendRaw("PRIVMSG " + user + " " + line);
+      BOT.sendRaw("PRIVMSG " + user + " " + line);
     } else {
-      bot.sendRaw("PRIVMSG " + service + " /msg " + user + " " + line);
+      BOT.sendRaw("PRIVMSG " + service + " /msg " + user + " " + line);
     }
   }
 
   // Method to gracefully shutdown the bot
   public static void quit() {
-    bot.sendRaw("QUIT Time for me to head out!");
+    BOT.sendRaw("QUIT Time for me to head out!");
     thread.interrupt();
   }
 
   // Generates the list of users across IRC and the servers
   public static void assembleUsers() {
-    Servers.clear();
+    SERVERS.clear();
     String line = null;
 
-    bot.sendRaw("PRIVMSG OREBuild /list");
-    if ((line = bot.readLine( )) != null) {
+    BOT.sendRaw("PRIVMSG OREBuild /list");
+    if ((line = BOT.readLine( )) != null) {
       if (line.contains("No such nick")) {
-        OREBuild.clear();
-        OREBuild.add("Server offline");
+        OREBUILD.clear();
+        OREBUILD.add("Server offline");
       } else {
         line.replaceAll("\\s+", "");
-        OREBuild = new ArrayList<String>(Arrays.asList(line.substring(line.lastIndexOf(": ") + 1).split(", ")));
+        OREBUILD = new ArrayList<String>(Arrays.asList(line.substring(line.lastIndexOf(": ") + 1).split(", ")));
       }
     }
 
-    bot.sendRaw("PRIVMSG ORESchool /list");
-    if ((line = bot.readLine( )) != null) {
+    BOT.sendRaw("PRIVMSG ORESchool /list");
+    if ((line = BOT.readLine( )) != null) {
       if (line.contains("No such nick")) {
-        ORESchool.clear();
-        ORESchool.add("Server offline");
+        ORESCHOOL.clear();
+        ORESCHOOL.add("Server offline");
       } else {
         line.replaceAll("\\s+", "");
-        ORESchool = new ArrayList<String>(Arrays.asList(line.substring(line.lastIndexOf(": ") + 1).split(", ")));
+        ORESCHOOL = new ArrayList<String>(Arrays.asList(line.substring(line.lastIndexOf(": ") + 1).split(", ")));
       }
     }
 
-    bot.sendRaw("PRIVMSG ORESurvival /list");
-    if ((line = bot.readLine( )) != null) {
+    BOT.sendRaw("PRIVMSG ORESurvival /list");
+    if ((line = BOT.readLine( )) != null) {
       if (line.contains("No such nick")) {
-        ORESurvival.clear();
-        ORESurvival.add("Server offline");
+        ORESURVIVAL.clear();
+        ORESURVIVAL.add("Server offline");
       } else {
         line.replaceAll("\\s+", "");
-        ORESurvival = new ArrayList<String>(Arrays.asList(line.substring(line.lastIndexOf(": ") + 1).split(", ")));
+        ORESURVIVAL = new ArrayList<String>(Arrays.asList(line.substring(line.lastIndexOf(": ") + 1).split(", ")));
       }
     }
 
-    bot.sendRaw("PRIVMSG ORESkyblock /list");
-    if ((line = bot.readLine( )) != null) {
+    BOT.sendRaw("PRIVMSG ORESkyblock /list");
+    if ((line = BOT.readLine( )) != null) {
       if (line.contains("No such nick")) {
-        ORESkyblock.clear();
-        ORESkyblock.add("Server offline");
+        ORESKYBLOCK.clear();
+        ORESKYBLOCK.add("Server offline");
       } else {
         line.replaceAll("\\s+", "");
-        ORESkyblock = new ArrayList<String>(Arrays.asList(line.substring(line.lastIndexOf(": ") + 1).split(", ")));
+        ORESKYBLOCK = new ArrayList<String>(Arrays.asList(line.substring(line.lastIndexOf(": ") + 1).split(", ")));
       }
     }
 
-    bot.sendRaw("NAMES " + settings.getProperty("channel") + "\r\n");
-    //while ((line = bot.readLine()) != null) {
-      //if (line.contains("353 " + settings.getProperty("nick"))) {
-    if ((line = bot.readLine( )) != null) {
+    BOT.sendRaw("NAMES " + SETTINGS.getProperty("channel") + "\r\n");
+    if ((line = BOT.readLine( )) != null) {
       IRC = new ArrayList<String>(Arrays.asList(line.substring(line.lastIndexOf(":") + 1).split(" ")));
-//        break;
     }
   }
 
@@ -395,7 +391,7 @@ assembleCommands();
 
       HttpURLConnection conn = null;
       try {
-        URL url = new URL("https://api-ssl.bitly.com/v3/shorten?access_token=" + settings.getProperty("bitly") + "&longUrl=" + URL + "&format=txt");
+        URL url = new URL("https://api-ssl.bitly.com/v3/shorten?access_token=" + SETTINGS.getProperty("bitly") + "&longUrl=" + URL + "&format=txt");
         conn = (HttpURLConnection) url.openConnection();
         conn.setDoOutput(true);
         conn.setDoInput(true);
@@ -421,7 +417,7 @@ assembleCommands();
       conn.setDoOutput(true);
       conn.setDoInput(true);
       conn.setRequestMethod("GET");
-      conn.setRequestProperty("X-Mashape-Key", settings.getProperty("mashape"));
+      conn.setRequestProperty("X-Mashape-Key", SETTINGS.getProperty("mashape"));
       conn.setRequestProperty("Accept", "text/plain");
 
       BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
@@ -445,7 +441,7 @@ assembleCommands();
     String temp = "No definitions found for " + word;
     HttpURLConnection conn = null;
     try {
-      URL url = new URL("http://www.dictionaryapi.com/api/v1/references/collegiate/xml/" + word + "?key=" + settings.getProperty("dictionary"));
+      URL url = new URL("http://www.dictionaryapi.com/api/v1/references/collegiate/xml/" + word + "?key=" + SETTINGS.getProperty("dictionary"));
       conn = (HttpURLConnection) url.openConnection();
       conn.setRequestMethod("GET");
 
@@ -513,11 +509,11 @@ assembleCommands();
 
   // Simple method to send a Slack message to the specified channel
   public static void postSlack(String message) {
-    String input = "payload={\"channel\": \"#botspam\", \"username\": \"nick_bot\", \"text\": \"" + message.replaceAll(settings.getProperty("allowedChars"), " ") + "\", \"icon_emoji\": \":robot_face:\"}";
+    String input = "payload={\"channel\": \"#botspam\", \"username\": \"nick_bot\", \"text\": \"" + message.replaceAll(SETTINGS.getProperty("allowedChars"), " ") + "\", \"icon_emoji\": \":robot_face:\"}";
 
     HttpsURLConnection conn = null;
     try {
-      URL url = new URL(settings.getProperty("slackURL"));
+      URL url = new URL(SETTINGS.getProperty("slackURL"));
       conn = (HttpsURLConnection) url.openConnection();
       conn.setDoOutput(true);
       conn.setDoInput(true);
@@ -543,17 +539,17 @@ assembleCommands();
   // Assembles all operators from operators.txt
   public static void assembleOPs () {
     try {
-      operators.clear();
+      OPERATORS.clear();
       String operator;
       BufferedReader in = new BufferedReader(new FileReader("includes/operators.txt"));
 
       while ((operator = in.readLine()) != null) {
-          operators.add(operator);
+          OPERATORS.add(operator);
       }
 
       in.close();
 
-      System.out.println("LOADED OPERATORS: " + operators.toString());
+      System.out.println("LOADED OPERATORS: " + OPERATORS.toString());
 
     } catch (IOException e) {
       System.out.println(e);
@@ -566,14 +562,14 @@ assembleCommands();
       String command;
       BufferedReader in = new BufferedReader(new FileReader("includes/commands.txt"));
       int id = 0;
-      commands.clear();
+      COMMANDS.clear();
       while ((command = in.readLine()) != null) {
         if (!command.startsWith("#") && command.length()>2) {
           id++;
           String com = command.substring(0, command.indexOf("="));
           ArrayList<String> val = new ArrayList<String>(Arrays.asList(command.substring(command.indexOf("=") +1).split(", ")));
           command comm = new command(id, com, val);
-          commands.add(comm);
+          COMMANDS.add(comm);
           System.out.println("LOADED COMMAND: " + comm.toString());
         }
       }
