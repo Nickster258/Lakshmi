@@ -174,6 +174,19 @@ public class nick_bot {
           }
         }
 
+      } else if (line.contains("`uuid")) {
+        commandParser comm = new commandParser(line);
+        if (comm.getPostCommandRaw().equals("NULL")) {
+          sendUser(comm.getService(), comm.getUser(), "You have to user!");
+        } else {
+          if (canSpeak(comm.getUser())) {
+            sendUser(comm.getService(), comm.getUser(), uuid(comm.getPostCommand(0)));
+          } else {
+            sendUser(comm.getService(), comm.getUser(), "You have exceeded your timeout!");
+          }
+        }
+        System.out.println("COMMAND EXECUTED: " + comm.toString());
+
       } else if (line.contains("`status")) {
         commandParser comm = new commandParser(line);
         if (comm.getPostCommandRaw().equals("NULL")) {
@@ -221,7 +234,7 @@ public class nick_bot {
           commList = commList.concat(temp.getCommand() + " ");
         }
         sendUser(comm.getService(), comm.getUser(), commList);
-        sendUser(comm.getService(), comm.getUser(), "Complex commands (*OP required): urban define staff sudo* reload* quit*");
+        sendUser(comm.getService(), comm.getUser(), "Complex commands (*OP required): urban define staff status sudo* reload* quit*");
         System.out.println("COMMAND EXECUTED: " + comm.toString());
 
       /*} else if (line.contains("`list")) {
@@ -241,7 +254,7 @@ public class nick_bot {
       } else if (line.contains("`staff")) {
         commandParser comm = new commandParser(line);
         if (comm.getPostCommandRaw() != null) {
-          postSlack("@channel " + comm.getUser() + " (" + comm.getService() + "): " + comm.getPostCommandRaw());
+          postSlack("<!channel> " + comm.getUser() + " (" + comm.getService() + "): " + comm.getPostCommandRaw());
         } else {
           sendUser(comm.getService(), comm.getUser(), "Please include a statement!");
         }
@@ -451,6 +464,29 @@ public class nick_bot {
     return word + ": " + temp;
   }
 
+  public static String uuid(String name) {
+    String temp = "UUID not found";
+    HttpURLConnection conn = null;
+    try {
+      URL url = new URL("https://api.mojang.com/users/profiles/minecraft/" + name);
+      conn = (HttpURLConnection) url.openConnection();
+      conn.setRequestMethod("GET");
+
+      BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+      String line = null;
+      while((line = in.readLine()) != null) {
+        if (!line.contains("Not Found")) {
+          temp = line.substring(7, line.indexOf("\"", 10));
+        }
+        break;
+      }
+    } catch (Exception e) {
+      System.out.println(e);
+    }
+    return temp;
+  }
+
+
   public static String status(String server) {
     String temp = server + " not found";
     HttpURLConnection conn = null;
@@ -546,3 +582,4 @@ public class nick_bot {
     }
   }
 }
+
