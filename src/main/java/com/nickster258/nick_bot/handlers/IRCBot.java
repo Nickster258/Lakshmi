@@ -167,6 +167,10 @@ public class IRCBot {
     this.sendRaw("PRIVMSG " + user + " " + line);
   }
 
-  public static void main (String[] args) {
+  public String toString() {
+    return "IRCBot(" + username + ", " + server + ", " + port + ", " + channel + ")";
   }
+
+  public static void main (String[] args) {
+ }
 }
