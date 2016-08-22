@@ -252,7 +252,7 @@ public class main {
           commList = commList.concat(temp.getCommand() + " ");
         }
         sendUser(comm.getService(), comm.getUser(), commList);
-        sendUser(comm.getService(), comm.getUser(), "Complex commands (*OP required): urban define staff status uuid sudo* reload* quit*");
+        sendUser(comm.getService(), comm.getUser(), "Complex commands (*OP required): urban define staff status uuid history sudo* reload* quit*");
         System.out.println("COMMAND EXECUTED: " + comm.toString());
 
       /*} else if (line.contains("`list")) {
@@ -518,7 +518,6 @@ public class main {
       boolean contains = true;
       temp = "Name history: ";
       while (contains) {
-        System.out.println(line);
         line = line.substring(line.indexOf("\"name\":") + 8);
         temp = temp.concat(line.substring(0,line.indexOf("\"")) + ", ");
         if (!line.contains("name")) {
