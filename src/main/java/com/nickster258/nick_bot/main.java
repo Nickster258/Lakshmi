@@ -43,7 +43,7 @@ public class main {
       SETTINGS.load(input);
       input.close();
     } catch (IOException e) {
-      System.out.println(e);
+      e.printStackTrace();
     }
   }
   private static String getProperty (String key) {
@@ -394,7 +394,7 @@ public class main {
     try {
       reachable = InetAddress.getByName(domain).isReachable(500);
     } catch (Exception e) {
-      System.out.println(e);
+      e.printStackTrace();
     }
     if (reachable) {*/
       try {
@@ -404,7 +404,7 @@ public class main {
           URL = URLEncoder.encode(URL, "UTF-8");
         }
       } catch (Exception e) {
-        System.out.println(e);
+        e.printStackTrace();
       }
 
       HttpURLConnection conn = null;
@@ -419,7 +419,7 @@ public class main {
         shortenedURL = in.readLine();
         in.close();
       } catch (Exception e) {
-        System.out.println(e);
+        e.printStackTrace();
       //}
     }
     return shortenedURL;
@@ -450,7 +450,7 @@ public class main {
         temp = temp.replace("\\n", ". ");
       }
     } catch (Exception e) {
-      System.out.println(e);
+      e.printStackTrace();
     }
     return word + ": " + temp;
   }
@@ -474,7 +474,7 @@ public class main {
         }
       }
     } catch (Exception e) {
-      System.out.println(e);
+      e.printStackTrace();
     }
     return word + ": " + temp;
   }
@@ -496,7 +496,7 @@ public class main {
         break;
       }
     } catch (Exception e) {
-      System.out.println(e);
+      e.printStackTrace();
     }
     return temp;
   }
@@ -527,7 +527,7 @@ public class main {
       temp = temp.substring(0, temp.lastIndexOf(","));
 
     } catch (Exception e) {
-      System.out.println(e);
+      e.printStackTrace();
     }
     return temp;
   }
@@ -549,7 +549,7 @@ public class main {
         break;
       }
     } catch (Exception e) {
-      System.out.println(e);
+      e.printStackTrace();
     }
     return temp;
   }
@@ -578,9 +578,9 @@ public class main {
       conn.disconnect();
 
     } catch (MalformedURLException e) {
-      System.out.println(e);
+      e.printStackTrace();
     } catch (IOException e) {
-      System.out.println(e);
+      e.printStackTrace();
     }
   }
 
@@ -600,7 +600,7 @@ public class main {
       System.out.println("LOADED OPERATORS: " + OPERATORS.toString());
 
     } catch (IOException e) {
-      System.out.println(e);
+      e.printStackTrace();
     }
   }
 
@@ -625,7 +625,7 @@ public class main {
       in.close();
 
     } catch (Exception e) {
-      System.out.println(e);
+      e.printStackTrace();
     }
   }
 }

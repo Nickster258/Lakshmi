@@ -85,7 +85,7 @@ public class IRCBot {
       }
 
     } catch (IOException e) {
-      System.out.println(e);
+      e.printStackTrace();
     }
   }
 
@@ -132,7 +132,7 @@ public class IRCBot {
     try {
       blah = this.reader.readLine();
     } catch (Exception e) {
-      System.out.println(e);
+      e.printStackTrace();
     }
     blah = blah.replaceAll("[\\p{Cntrl}\\p{Cc}]","");
     return blah;
@@ -144,7 +144,7 @@ public class IRCBot {
       writer.write(line + "\r\n");
       writer.flush();
     } catch (IOException e) {
-      System.out.println(e);
+      e.printStackTrace();
     }
   }
 
@@ -152,7 +152,7 @@ public class IRCBot {
     try {
       writer.write(line + "\r\n");
     } catch (IOException e) {
-      System.out.println(e);
+      e.printStackTrace();
     }
   }
 
@@ -160,7 +160,7 @@ public class IRCBot {
     try {
       writer.flush();
     } catch (IOException e) {
-      System.out.println(e);
+      e.printStackTrace();
     }
   }
 
