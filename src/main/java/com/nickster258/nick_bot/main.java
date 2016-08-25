@@ -23,6 +23,9 @@ import java.util.Properties;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import java.math.BigDecimal;
+import java.math.BigInteger;
+
 public class main {
 
   public static ArrayList <Command>     COMMANDS     = new ArrayList <Command>     ();
@@ -178,6 +181,26 @@ public class main {
             sendUser(temp.getService(), temp.getUser(), shorten(line));
           }
         }
+
+      } else if (line.contains("`calc")) {
+        CommandParser comm = new CommandParser(line);
+        if (canSpeak(comm.getUser())) {
+          if (comm.getPostCommandRaw().equals("NULL")) {
+            sendUser(comm.getService(), comm.getUser(), "Please provide an expression!");
+          } else {
+            try {
+              BigDecimal result = new Expression(comm.getPostCommandRaw()).eval();
+              sendUser(comm.getService(), comm.getUser(), result.toString());
+            } catch (Exception e) {
+              String result = e.toString();
+              e.printStackTrace();
+              sendUser(comm.getService(), comm.getUser(), result.substring(result.indexOf(":")+1));
+            }
+          }
+        } else {
+          sendUser(comm.getService(), comm.getUser(), "You have exceeded your timeout!");
+        }
+        System.out.println("COMMAND EXECUTED: " + comm.toString());
 
       } else if (line.contains("`uuid")) {
         CommandParser comm = new CommandParser(line);

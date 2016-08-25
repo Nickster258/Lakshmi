@@ -12,7 +12,7 @@ Note: Currently this bot works only if you have a registered account, because au
 
 This is my custom IRC bot project. It is capable of doing a few things at the moment including send Slack messages, shorten URLs, and more.
 
-- [ ] Implement mathematical functions (`calc 1*1)
+- [X] Implement mathematical functions (`calc 1*1) (Credit to https://github.com/uklimaschewski/EvalEx for the expression evaluator)
 - [X] Finalize URL shortener
 - [X] Post Slack messages
 - [X] Add an anti-spam with users.java
