@@ -50,7 +50,7 @@ public class Sample {
       } else if (line.contains("blah")) {                   // What your bot is listening to
         BOT.sendRaw("PRIVMSG " + channel + " ahk...");      // What your bot responds with
       } else {
-        System.out.println(line);                           // If prior conditions are not met, print (not necessary)
+        System.out.println(line);                           // If prior conditions are not met, print
       }
     }
   }
