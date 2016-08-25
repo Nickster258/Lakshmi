@@ -1,3 +1,5 @@
+package com.nickster258.nick_bot.handlers;
+
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 import java.io.OutputStreamWriter;

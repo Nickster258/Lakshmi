@@ -153,7 +153,7 @@ public class main {
   public static void listener() {
     String line = null;
     while ((line = BOT.readLine( )) != null) {
-      if (line.contains("PING")) {
+      if (line.indexOf("PING") == 0) {
         keepAlive(line);
 
       // Basic COMMANDS
