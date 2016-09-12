@@ -28,6 +28,7 @@ import java.math.BigInteger;
 
 public class Main {
 
+  public static int NAMEID = 0;
   public static ArrayList <Command>     COMMANDS     = new ArrayList <Command>     ();
   public static ArrayList <Users>       PATREONS     = new ArrayList <Users>       ();
   public static ArrayList <String>      OPERATORS    = new ArrayList <String>      ();
@@ -114,13 +115,11 @@ public class Main {
 
   public static boolean canSpeak(String name) {
     boolean found = false;
-    if (isOP(name)) {
-      return true;
-    }
     for (int i = 0; i < PATREONS.size(); i++) {
       Users temp = PATREONS.get(i);
       if (temp.getName().equals(name)) {
         temp.timeout++;
+        temp.commandCount++;
         PATREONS.remove(i);
         PATREONS.add(temp);
         found = true;
@@ -128,14 +127,21 @@ public class Main {
     }
 
     if (!found) {
-      Users temp = new Users(name);
+      Users temp = new Users(NAMEID, name);
       temp.timeout++;
+      temp.commandCount++;
+      if (isOP(name)) {
+        temp.setOp(true);
+      }
       PATREONS.add(temp);
+      NAMEID++;
     }
 
     for (int i = 0; i < PATREONS.size(); i++) {
       Users temp = PATREONS.get(i);
       if ((temp.getName().equals(name)) && (temp.timeout < 6 )) {
+        return true;
+      } else if (isOP(name)) {
         return true;
       }
     }
@@ -145,6 +151,7 @@ public class Main {
   public static void reload() {
     BOT.disconnect();
     resetAntispam();
+    NAMEID = 0;
     loadSettings();
     assembleOPs();
     assembleCommands();
@@ -173,14 +180,39 @@ public class Main {
         System.out.println("COMMAND EXECUTED: " + comm.toString());
 
       // Complicated COMMANDS
-      } else if (line.contains("http://") || line.contains("https://")) {
+      /*} else if (line.contains("http://") || line.contains("https://")) {
         if (!line.contains("#")) {
           LineParser temp = new LineParser(line);
           System.out.println(temp.toString());
           if (shorten(line) != null) {
             sendUser(temp.getService(), temp.getUser(), shorten(line));
           }
+        }*/
+
+      } else if (line.contains("`Uinfo")) {
+        CommandParser comm = new CommandParser(line);
+        if (canSpeak(comm.getUser())) {
+          if (comm.getPostCommandRaw().equals("NULL")) {
+            String userList = "Users: ";
+            for (int i = 0; i < PATREONS.size(); i++) {
+              Users temp = PATREONS.get(i);
+              userList = userList.concat(temp.toString() + " ");
+            }
+            sendUser(comm.getService(), comm.getUser(), userList);
+          } else {
+            String msg = "User not found.";
+            for (int i = 0; i < PATREONS.size(); i++) {
+              Users temp = PATREONS.get(i);
+              if (comm.getPostCommand(0).equals(temp.getName())) {
+                msg = temp.toString();
+              }
+            }
+            sendUser(comm.getService(), comm.getUser(), msg);
+          }
+        } else {
+          sendUser(comm.getService(), comm.getUser(), "You have exceeded your timeout!");
         }
+        System.out.println("COMMAND EXECUTED: " + comm.toString());
 
       } else if (line.contains("`calc")) {
         CommandParser comm = new CommandParser(line);

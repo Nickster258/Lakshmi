@@ -2,12 +2,20 @@ package com.nickster258.lakshmi.assemblers;
 
 public class Users {
 
-  public int timeout;
   String name;
+  boolean OP = false;
+  int ID;
+  public int timeout;
+  public int commandCount;
 
-  public Users (String name) {
+  public Users (int id, String name) {
+    this.ID = id;
     this.timeout = 0;
     this.name = name;
+  }
+
+  public void setOp (boolean op) {
+    this.OP = op;
   }
 
   public String getName () {
@@ -19,6 +27,6 @@ public class Users {
   }
 
   public String toString() {
-    return "user(" + name + ", " + timeout + ")";
+    return "user(id=" + ID + ", " + "OP=" + OP + ", commandCount=" + commandCount + ", name=" + name + ", timeout=" + timeout + ")";
   }
 }
